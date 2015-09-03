@@ -13,8 +13,15 @@ class Aspects
     # debo encontrar todas las clases y modulos dentro de programa
     # que matcheen con las expRegulares que pasan como parametros
 
+    # Hay que hacerle include a los origenes
+    parametros.each do
+      |ob|
+      ob.singleton_class.include(A)
+   
+    end
+
     # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
-    # origenes = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
+     totales = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
 
     # para validar que tire error al no recibir parametros
     if parametros.empty?
@@ -23,15 +30,24 @@ class Aspects
 
     origenes = Array.new
 
+    parametros.each do
+      |unParametro|
+      if !unParametro.instance_of? (Regexp)
+        origenes << unParametro
+      else
+        origenes.concat(totales.select{|unObjeto| unObjeto.name=~unParametro}.uniq)
+      end
+
+    end
+
     # forma deprecated. Lo dejo para ver nomas
-    parametros.each {|unParametro|
-      origenes.push (ObjectSpace.each_object(Module).to_a.select {|unObjeto| regular_exp_de(unParametro).match(unObjeto.to_s)})
-    }
+    #parametros.each {|unParametro|
+     # origenes.push (ObjectSpace.each_object(Module).to_a.select {|unObjeto| regular_exp_de(unParametro).match(unObjeto.to_s)})
+    #}
 
-    # Hay que hacerle include a los origenes
-    parametros.each{|ob| ob.singleton_class.include(A)}
 
-    origenes.flatten.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
+   # origenes.flatten.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
+     origenes.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
 
     # no pude hacer la validacion de que no encuentra origen dada expReg erronea
 
@@ -41,11 +57,11 @@ class Aspects
   # se que ponerla aca es totalmente un error. Es solo para probar
 
   #no esta probado y dudo seriamente que esto ande. Ademas se puede hacer de otras formas...
-  def self.regular_exp_de (un_elemento)
-    unless (un_elemento.instance_of? (Regexp))
-      Regexp.new(un_elemento.to_s)
-    end
-  end
+  #def self.regular_exp_de (un_elemento)
+  #  unless (un_elemento.instance_of? (Regexp))
+  #    Regexp.new(un_elemento.to_s)
+  #  end
+  #end
 end
 
 # Al definir el metodo en Module, por herencia lo tiene Class
@@ -58,7 +74,7 @@ class Module
   end
 end
 
-class Object
+class Objectc
   def definir_aspecto (bloque)
     self.singleton_class.send(:define_method, :nuevo_metodo, bloque)
   end
