@@ -17,7 +17,7 @@ class Aspects
     parametros.each do
       |ob|
       ob.singleton_class.include(A)
-   
+
     end
 
     # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
