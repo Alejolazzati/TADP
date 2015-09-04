@@ -21,24 +21,24 @@ end
 describe 'Testeo que el mensaje on funcione para instancias, clases, modulos y expresiones regulares' do
 
   it 'Cualquier instancia de Moto deberia entender el mensaje nuevo_metodo' do
-      expect(Moto.instance_methods.include? :nuevo_metodo).to eq(true)
+      expect(Moto.instance_methods.include? :nuevo_metodo).to be true
   end
 
   it 'La instancia arreglo deberia entender el mensaje nuevo_metodo' do
-    expect(arreglo.methods.include? :nuevo_metodo).to eq(true)
+    expect(arreglo.methods.include? :nuevo_metodo).to be true
   end
 
   it 'Cualquier instancia de Array no deberia entender el mensaje nuevo_metodo' do
-    expect(Array.new.methods.include? :nuevo_metodo).to eq(false)
+    expect(Array.new.methods.include? :nuevo_metodo).to be false
   end
 
   it 'Cualquier instancia de String deberia entender el mensaje nuevo_metodo por la regex /^S/' do
-    expect(String.instance_methods.include? :nuevo_metodo).to eq(true)
+    expect(String.instance_methods.include? :nuevo_metodo).to be true
   end
 
   it 'Cualquier instancia de Auto deberia entender el mensaje nuevo_metodo si incluye el modulo M' do
     Auto.include(M)
-    expect(Auto.instance_methods.include? :nuevo_metodo).to eq(true)
+    expect(Auto.instance_methods.include? :nuevo_metodo).to be true
   end
 
 end
