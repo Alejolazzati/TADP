@@ -33,12 +33,40 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
 
   it 'deberia devolver mixins cuando le mando solo mixins' do
     expected_origins.push(A_test,B_test)
+
     expect(Aspect.select_origins(A_test,B_test)).to eq(expected_origins)
   end
 
   it 'deberia devolver unos objetos cuando le mando solo unos objetos' do
     expected_origins.push(pepita_test,pepe_test)
+
     expect(Aspect.select_origins(pepita_test,pepe_test)).to eq(expected_origins)
   end
-  
+
+  describe 'Test basicos de Aspect con Expresiones Regulares matcheando con clases, modules y instancias por separado' do
+    let(:expected_origins) {
+      Array.new
+    }
+
+    it 'deberia devolver las clases que matchean con la regex' do
+      expected_origins.push(Pepita_test,Pepe_test)
+
+      expect(Aspect.select_origins(/Pepita_test|Pepe_test/)).to eq(expected_origins)
+    end
+
+    it 'deberia devolver mixins que matchean con la regex' do
+      expected_origins.push(A_test,B_test)
+
+      expect(Aspect.select_origins(/A_test|B_test/)).to eq(expected_origins)
+    end
+
+    it 'deberia devolver la lista vacia ya que los objetos concretos no matchean con la regex' do
+
+      expect(Aspect.select_origins(/pepe_test|pepita_test/)).to eq(expected_origins)
+    end
+=begin
+=end
+
+  end
+
 end
