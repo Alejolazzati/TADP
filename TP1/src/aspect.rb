@@ -14,7 +14,7 @@ class Aspect
       unaClase.send(:define_method, :nuevo_metodo, bloque)
     end
 
-    instancias_de(*origenes).each do
+    (origenes - clases_y_modulos).each do
       |unaInstancia|
       unaInstancia.extend(A)
       unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque)
@@ -50,10 +50,6 @@ class Aspect
 
   def self.modulos_de(*origenes)
     origenes.select { |o| o.instance_of? Module }
-  end
-
-  def self.instancias_de(*origenes)
-    origenes - self.clases_de(*origenes) - self.modulos_de(*origenes)
   end
 
 
