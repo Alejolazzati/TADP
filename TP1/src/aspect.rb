@@ -18,7 +18,7 @@ class Aspect
   # end
 
     # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
-    select_origins(*parametros, &bloque)
+    select_origins(*parametros)
 
     # forma deprecated. Lo dejo para ver nomas
     #parametros.each {|unParametro|
@@ -41,7 +41,7 @@ class Aspect
 
   end
 
-  def self.select_origins(*parametros,&bloque)
+  def self.select_origins(*parametros)
     totales = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
 
     # para validar que tire error al no recibir parametros
