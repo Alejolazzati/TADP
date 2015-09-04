@@ -3,41 +3,10 @@ require_relative '../src/probando_cosas'
 class Aspect
 
   def self.on (*parametros, &bloque)
-    # debo encontrar todas las clases y modulos dentro de programa
-    # que matcheen con las expRegulares que pasan como parametros
 
-    # Hay que hacerle include a los origenes
-  #  parametros.each do
-  #    |ob|
-  #    if !ob.class.is_a? Class
-  #      ob.singleton_class.include(A)
-  #    else
-  #      ob.include(A)
-  #    end
+    origenes = select_origins(bloque, parametros)
 
-  # end
-
-    # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
-    select_origins(bloque, parametros)
-
-    # forma deprecated. Lo dejo para ver nomas
-    #parametros.each {|unParametro|
-    # origenes.push (ObjectSpace.each_object(Module).to_a.select {|unObjeto| regular_exp_de(unParametro).match(unObjeto.to_s)})
-    #}
-
- #   origenes.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
-
-    # no pude hacer la validacion de que no encuentra origen dada expReg erronea
-
-    # no se porque, pero para usar este metodo me lo pide de clase
-    # se que ponerla aca es totalmente un error. Es solo para probar
-
-    #no esta probado y dudo seriamente que esto ande. Ademas se puede hacer de otras formas...
-    #def self.regular_exp_de (un_elemento)
-    #  unless (un_elemento.instance_of? (Regexp))
-    #    Regexp.new(un_elemento.to_s)
-    #  end
-    #end
+    agregar_mixin(origenes, A)
 
   end
 
@@ -59,6 +28,23 @@ class Aspect
         origenes << unParametro
       end
     end
+
+    return origenes
+  end
+
+  def agregar_mixin(*origenes, unMixin)
+
+    clases = origenes.select { |o| o.instance_of? Class }
+    modulos = clases = origenes.select { |o| o.instance_of? Module }
+    instancias = origenes - clases - modulos
+
+  end
+
+
+end
+
+
+
 =begin
     clases = origenes.select { |o| o.instance_of? Class }
     clases.each { |c| c.include(A) }
@@ -69,8 +55,3 @@ class Aspect
     clases.each { |c| c.send(:define_method, :nuevo_metodo, bloque) }
     instancias.each { |i| i.singleton_class.send(:define_method, :nuevo_metodo, bloque) }
 =end
-    return origenes
-  end
-
-
-end
