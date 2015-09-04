@@ -27,11 +27,13 @@ describe 'Aspect basic tests' do
 
   it 'deberia devolver las clases cuando le mando solo clases' do
     expected_origins.push(Pepe_test,Pepita_test)
-  expect(Aspect.select_origins(Pepe_test,Pepita_test,{})).to eq(expected_origins)
+
+    expect(Aspect.select_origins(Pepe_test,Pepita_test)).to eq(expected_origins)
   end
 =begin
   it 'deberia devolver mixins cuando le mando solo mixins' do
-
+    expected_origins.push(Pepe_test,Pepita_test)
+    expect(Aspect.select_origins(A_test,B_test,{})).to eq(expected_origins)
   end
 
   it 'deberia devolver unos objetos cuando le mando solo unos objetos' do

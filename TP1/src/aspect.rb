@@ -18,7 +18,7 @@ class Aspect
   # end
 
     # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
-    select_origins(bloque, parametros)
+    select_origins(*parametros, &bloque)
 
     # forma deprecated. Lo dejo para ver nomas
     #parametros.each {|unParametro|
