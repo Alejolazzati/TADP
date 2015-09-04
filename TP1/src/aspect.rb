@@ -16,7 +16,7 @@ class Aspect
 
     instancias_de(*origenes).each do
       |unaInstancia|
-      unaInstancia.extend(A)
+      unaInstancia.singleton_class.include(A)
       unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque)
     end
 

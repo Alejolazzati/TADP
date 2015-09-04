@@ -10,11 +10,11 @@ class Pepe_test
 
 end
 
-module A_test
+module ModuleA_test
 
 end
 
-module B_test
+module ModuleB_test
 
 end
 
@@ -28,7 +28,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
   }
 
   it 'deberia lanzar excepcion cuando no se le pasa parametros' do
-    expect { Aspect.select_origins() }.to raise_error(ArgumentError, 'wrong number of arguments (0 for +1)')
+    expect { Aspect.select_origins }.to raise_error(ArgumentError, 'wrong number of arguments (0 for +1)')
   end
 
   it 'deberia devolver las clases cuando le mando solo clases' do
@@ -38,9 +38,9 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
   end
 
   it 'deberia devolver mixins cuando le mando solo mixins' do
-    expected_origins.push(A_test, B_test)
+    expected_origins.push(ModuleA_test, ModuleB_test)
 
-    expect(Aspect.select_origins(A_test, B_test)).to eq(expected_origins)
+    expect(Aspect.select_origins(ModuleA_test, ModuleB_test)).to eq(expected_origins)
   end
 
   it 'deberia devolver unos objetos cuando le mando solo unos objetos' do
@@ -62,7 +62,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
     end
 
     it 'deberia devolver mixins que matchean con la regex' do
-      expected_origins.push(A_test, B_test)
+      expected_origins.push(ModuleA_test, ModuleB_test)
 
       expect(Aspect.select_origins(/A_test|B_test/)).to eq(expected_origins)
     end
@@ -86,15 +86,15 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
     end
 
     it 'deberia devolver las clases, modulos, objetos explicitos y clases y modulos implicitamente con la regex' do
-      expected_origins.push(Pepita_test, A_test, pepe_test, Pepe_test, B_test)
+      expected_origins.push(Pepita_test, ModuleA_test, pepe_test, Pepe_test, ModuleB_test)
 
-      expect(Aspect.select_origins(Pepita_test, A_test, pepe_test, /Pepe_test/, /B_test/)).to eq(expected_origins)
+      expect(Aspect.select_origins(Pepita_test, ModuleA_test, pepe_test, /Pepe_test/, /B_test/)).to eq(expected_origins)
     end
 
     it 'implicitos y explicitos y ademas una Regex que no encuentra nada' do
-      expected_origins.push(Pepita_test, A_test, pepe_test, Pepe_test, B_test)
+      expected_origins.push(Pepita_test, ModuleA_test, pepe_test, Pepe_test, ModuleB_test)
 
-      expect(Aspect.select_origins(Pepita_test, A_test, pepe_test, /Pepe_test/, /B_test/, /Regex no existente/)).to eq(expected_origins)
+      expect(Aspect.select_origins(Pepita_test, ModuleA_test, pepe_test, /Pepe_test/, /B_test/, /Regex no existente/)).to eq(expected_origins)
     end
 
   end
