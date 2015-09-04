@@ -1,3 +1,5 @@
+require_relative '../src/probando_cosas'
+
 class Aspect
 
   def self.on (*parametros, &bloque)
@@ -5,11 +7,15 @@ class Aspect
     # que matcheen con las expRegulares que pasan como parametros
 
     # Hay que hacerle include a los origenes
-    parametros.each do
-    |ob|
-      ob.singleton_class.include(A)
+  #  parametros.each do
+  #    |ob|
+  #    if !ob.class.is_a? Class
+  #      ob.singleton_class.include(A)
+  #    else
+  #      ob.include(A)
+  #    end
 
-    end
+  # end
 
     # forma mas piola de hacer eso de sacar todas las clases y modulos que hay
     totales = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
@@ -23,22 +29,28 @@ class Aspect
 
     parametros.each do
     |unParametro|
-      if !unParametro.instance_of? (Regexp)
-        origenes << unParametro
-      else
+      if unParametro.instance_of? (Regexp)
         origenes.concat(totales.select{|unObjeto| unObjeto.name=~unParametro}.uniq)
+      else
+        origenes << unParametro
       end
-
     end
+
+    clases = origenes.select{|o| o.instance_of? Class}
+    clases.each{|c| c.include(A)}
+
+    instancias = origenes - clases
+    instancias.each{|i| i.extend(A)}
+
+    clases.each{|c| c.send(:define_method, :nuevo_metodo, bloque)}
+    instancias.each{|i| i.singleton_class.send(:define_method, :nuevo_metodo, bloque)}
 
     # forma deprecated. Lo dejo para ver nomas
     #parametros.each {|unParametro|
     # origenes.push (ObjectSpace.each_object(Module).to_a.select {|unObjeto| regular_exp_de(unParametro).match(unObjeto.to_s)})
     #}
 
-
-    # origenes.flatten.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
-    origenes.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
+ #   origenes.each {|unOrigen| unOrigen.definir_aspecto(bloque)}
 
     # no pude hacer la validacion de que no encuentra origen dada expReg erronea
 
