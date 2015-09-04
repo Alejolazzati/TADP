@@ -5,9 +5,20 @@ class Aspect
   def self.on (*parametros, &bloque)
 
     origenes = select_origins(*parametros)
-    agregar_mixin(origenes, A)
 
-#    agregar_metodo(origenes, &bloque)
+    clases_y_modulos = clases_de(*origenes).concat modulos_de(*origenes)
+
+    clases_y_modulos.each do
+     |unaClase|
+      unaClase.include(A)
+      unaClase.send(:define_method, :nuevo_metodo, bloque)
+    end
+
+    instancias_de(*origenes).each do
+      |unaInstancia|
+      unaInstancia.extend(A)
+      unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque)
+    end
 
   end
 
@@ -31,48 +42,6 @@ class Aspect
     end
 
     return origenes
-  end
-
-  def self.agregar_mixin(*origenes, unMixin)
-
-    clases = self.clases_de(*origenes)
-    modulos = self.modulos_de(*origenes)
-    instancias = self.instancias_de(*origenes)
-
-    incluir_mixin(clases, unMixin, :itself)
-    incluir_mixin(modulos, unMixin, :itself)
-    incluir_mixin(instancias, unMixin, :singleton_class)
-
-  end
-
-  def self.incluir_mixin(*objetos, unMixin, mensaje_identidad_objetos)
-    objetos.each do
-      |unObjeto|
-      receptor = unObjeto.send(mensaje_identidad_objetos)
-      receptor.include(unMixin)
-
-    end
-  end
-
-  def self.agregar_metodo(*origenes, &bloque)
-
-    clases = self.clases_de(*origenes)
-    modulos = self.modulos_de(*origenes)
-    instancias = self.instancias_de(*origenes)
-
-    definir_nuevo_metodo(clases, :itself, &bloque)
-    definir_nuevo_metodo(modulos, :itself, &bloque)
-    definir_nuevo_metodo(instancias, :singleton_class, &bloque)
-
-  end
-
-  def self.definir_nuevo_metodo(*objetos, mensaje_identidad_objetos, &bloque)
-    objetos.each do
-      |unObjeto|
-      unObjeto = unObjeto.send(mensaje_identidad_objetos)
-      unObjeto.send(:define_method, :nuevo_metodo, bloque)
-    end
-
   end
 
   def self.clases_de(*origenes)
