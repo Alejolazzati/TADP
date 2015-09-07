@@ -7,18 +7,19 @@ module A
   # aca le harcodeo una transformacion. Lo que hace es redefinir los mensajes que cumplan las
   # condiciones del where, haciendo devolver 'HOla'
   def transform (*param)
-    param.flatten.map {|a| a.to_s}
-    param.flatten.each {|metodo| send(:define_method, metodo.to_sym, proc{'HOla'})}
+    param.flatten.each {|metodo| send(:define_method, metodo, proc{'HOla'})}
   end
 
   def where (*conditions)
-    methods_found = Array.new
-    conditions.each {|a_condition| methods_found << a_condition.call}
-    methods_found
+    instance_methods.select {|a_method| allSatisfy conditions, a_method}
+  end
+
+  def allSatisfy (*conditions, a_method)
+    conditions.all? {|a_condition| a_condition[0].call a_method}
   end
 
   def name (reg_ex)
-    lambda {instance_methods.select {|a_method| a_method.to_s =~ reg_ex}}
+    proc {|a_method| (a_method.to_s =~ reg_ex) == 0}
   end
 end
 
