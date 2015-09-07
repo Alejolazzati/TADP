@@ -11,16 +11,29 @@ module A
   end
 
   def where (*conditions)
-    instance_methods.select {|a_method| allSatisfy conditions, a_method}
+    public_and_private_methods.select {|a_method| allSatisfy conditions, a_method}
   end
 
   def allSatisfy (*conditions, a_method)
-    conditions.all? {|a_condition| a_condition[0].call a_method}
+    conditions.flatten.all? {|a_condition| a_condition.call a_method}
   end
 
   def name (reg_ex)
     proc {|a_method| (a_method.to_s =~ reg_ex) == 0}
   end
+
+  def is_public
+    proc {|a_method| public_methods.include? a_method}
+  end
+
+  def is_private
+    proc {|a_method| private_methods.include? a_method}
+  end
+
+  def public_and_private_methods
+    instance_methods + private_methods
+  end
+
 end
 
 class Object
