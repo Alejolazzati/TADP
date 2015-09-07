@@ -3,8 +3,32 @@
 # es solo para ver como hacerlo andar e ir probando cosas
 
 module A
-  def where
-    'FUNQUE AMEEEOO!! EAEAEAEA AGUANTE LAS PUTAS EAEA'
+
+  # aca le harcodeo una transformacion. Lo que hace es redefinir los mensajes que cumplan las
+  # condiciones del where, haciendo devolver 'HOla'
+  def transform (*param)
+    param.flatten.map {|a| a.to_s}
+    param.flatten.each {|metodo| send(:define_method, metodo.to_sym, proc{'HOla'})}
+  end
+
+  def where (*conditions)
+    methods_found = Array.new
+    conditions.each {|a_condition| methods_found << a_condition.call}
+    methods_found
+  end
+
+  def name (reg_ex)
+    lambda {instance_methods.select {|a_method| a_method.to_s =~ reg_ex}}
+  end
+end
+
+class Object
+  def define_method (a, b)
+    define_singleton_method a, b
+  end
+
+  def instance_methods
+    methods
   end
 end
 

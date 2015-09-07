@@ -11,15 +11,21 @@ class Aspect
     clases_y_modulos.each do
      |unaClase|
       unaClase.include(A)
-      unaClase.send(:define_method, :nuevo_metodo, bloque)
+      unaClase.singleton_class.include(A)
+
+      unaClase.send(:define_method, :nuevo_metodo, bloque) #ya no seria necesario
+
+      unaClase.instance_eval &bloque # con esto se ejecuta tod el trasnform con sus condiciones
     end
 
     (origenes - clases_y_modulos).each do
       |unaInstancia|
       unaInstancia.singleton_class.include(A)
-      unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque)
-    end
 
+      unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque) #ya no seria necesario
+
+      unaInstancia.instance_eval &bloque # con esto se ejecuta tod el trasnform con sus condiciones
+    end
   end
 
   def self.select_origins(*parametros)
