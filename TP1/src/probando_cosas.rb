@@ -11,7 +11,7 @@ module A
   end
 
   def where (*conditions)
-    public_and_private_methods.select {|a_method| allSatisfy conditions, a_method}
+    instance_methods.select {|a_method| allSatisfy conditions, a_method}
   end
 
   def allSatisfy (*conditions, a_method)
@@ -33,6 +33,28 @@ module A
   def public_and_private_methods
     instance_methods + private_methods
   end
+
+  def has_parameters(n, tipo)
+    proc{|unMetodo| method(unMetodo).parameters.select{|param| param.first.to_s == tipo}.length == n}
+  end
+
+
+=begin
+
+  def methods_with_parameters(n)
+    instance_methods.select do
+      |unMetodo|
+      method(unMetodo).parameters.length == n
+    end
+  end
+
+  def methods_with_parameters_with(n, regex)
+    instance_methods.select do
+      |unMetodo|
+      method(unMetodo).parameters.select{|param| param.first.to_s =~ regex}.length == n
+    end
+  end
+=end
 
 end
 
