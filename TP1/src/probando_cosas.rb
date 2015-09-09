@@ -11,7 +11,7 @@ module A
   end
 
   def where (*conditions)
-      instance_methods.select {|a_method| allSatisfy conditions, a_method}
+      public_and_private_methods.select {|a_method| allSatisfy conditions, a_method}
   end
 
   def allSatisfy (*conditions, a_method)

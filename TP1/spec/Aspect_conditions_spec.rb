@@ -73,8 +73,13 @@ describe 'Test donde se verifica que las distintas condiciones validen correctam
   end
 
   it 'neg debe negar la condicion' do
-    #expect(pepe_test.neg(name(/ma.ar/)).call :metodo_privado).to be true
-    #expect(pepe_test.neg(name(/metodo_pri.ad./)).call :matar).to be true
+    expect(pepe_test.neg(pepe_test.name(/ma.ar/)).call :metodo_privado).to be true
+    expect(pepe_test.neg(pepe_test.name(/metodo_pri.ad./)).call :matar).to be true
+  end
+
+  it 'neg da false cuando la condicion evaluada es true' do
+    expect(pepe_test.neg(pepe_test.name(/ma.ar/)).call :matar).to be false
+    expect(pepe_test.neg(pepe_test.name(/metodo_pri.ad./)).call :metodo_privado).to be false
   end
 
 
