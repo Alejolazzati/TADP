@@ -36,9 +36,9 @@ module A
 
   def has_parameters(n, tipo = proc{|unMetodo| instance_method(unMetodo).parameters})
     if tipo.instance_of? Regexp
-      proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.last =~ tipo}.length == n}
+      proc{|unMetodo| (instance_method(unMetodo).parameters.select{|param| param.last =~ tipo}.length) == n}
     else
-      proc{ |unMetodo| tipo.call(unMetodo).length == n}
+      proc{ |unMetodo| (tipo.call(unMetodo).length) == n}
     end
   end
 
