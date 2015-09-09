@@ -60,7 +60,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
 
     it 'deberia devolver la lista vacia ya que los objetos concretos no matchean con la regex' do
 
-      expect{Aspect.select_origins(/pepe_test|pepita_test/)}.to raise_error(ArgumentError, 'None of them respond to a valid font')
+      expect{Aspect.select_origins(/pepe_test|pepita_test/)}.to raise_error(ArgumentError, 'Origen vacio')
     end
 
   end
@@ -70,7 +70,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
 
     it 'regex no encontrada retorna origins vacio' do
 
-      expect{Aspect.select_origins(/Regex no existente/)}.to raise_error(ArgumentError, 'None of them respond to a valid font')
+      expect{Aspect.select_origins(/Regex no existente/)}.to raise_error(ArgumentError, 'Origen vacio')
     end
 
     it 'deberia devolver las clases, modulos, objetos explicitos y clases y modulos implicitamente con la regex' do
