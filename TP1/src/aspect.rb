@@ -47,6 +47,10 @@ class Aspect
       end
     end
 
+    if origenes.empty?
+      raise ArgumentError.new 'None of them respond to a valid font'
+    end
+
     return origenes
   end
 
