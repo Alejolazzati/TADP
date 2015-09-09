@@ -11,7 +11,7 @@ module A
   end
 
   def where (*conditions)
-    instance_methods.select {|a_method| allSatisfy conditions, a_method}
+      instance_methods.select {|a_method| allSatisfy conditions, a_method}
   end
 
   def allSatisfy (*conditions, a_method)
@@ -34,10 +34,29 @@ module A
     instance_methods + private_methods
   end
 
-  def has_parameters(n, tipo)
-    proc{|unMetodo| method(unMetodo).parameters.select{|param| param.first.to_s == tipo}.length == n}
+  def has_parameters(n, tipo = 0)
+      proc{ |unMetodo|
+        parametros = new.method(unMetodo).parameters
+
+        total = case tipo
+          when 0 then
+            parametros.length
+          when 1 then
+            parametros.select{|param| param.first.to_s=~/req/}.length
+          when 2 then
+            parametros.select{|param| param.first.to_s=~/opt/}.length
+        end
+
+       total == n}
   end
 
+  def mandatory
+    1
+  end
+
+  def optional
+    2
+  end
 
 =begin
 
