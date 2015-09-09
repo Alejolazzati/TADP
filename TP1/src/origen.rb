@@ -2,8 +2,7 @@
 # se que esto que hago aca ahora se puede diseñar mucho mejor.
 # es solo para ver como hacerlo andar e ir probando cosas
 
-module A
-
+module Origen
   # aca le harcodeo una transformacion. Lo que hace es redefinir los mensajes que cumplan las
   # condiciones del where, haciendo devolver 'HOla'
   def transform (*methods_found)

@@ -1,4 +1,4 @@
-require_relative '../src/probando_cosas'
+require_relative '../src/origen'
 
 class Aspect
 
@@ -8,7 +8,7 @@ class Aspect
 
     origenes each do
     |unOrigen|
-      unOrigen.singleton_class.include(A)
+      unOrigen.singleton_class.include(Origen)
       unOrigen.instance_eval &bloque
     end
   end

@@ -3,7 +3,7 @@ require_relative '../src/Aspect'
 
 #estructuras para testear
 class Pepita_test
-  include A
+  include Origen
 
   def saludar
     'hola, estoy saludando'
@@ -17,7 +17,7 @@ class Pepita_test
 end
 
 class Pepe_test
-  include A
+  include Origen
 
   def matar
     'te mata feo'
@@ -30,8 +30,8 @@ class Pepe_test
 end
 
 class Mi_clase
-  include A
-  singleton_class.include A
+  include Origen
+  singleton_class.include Origen
   def foo(p1, p2, p3, p4='a', p5='b', p6='c')
     'foo'
   end
@@ -41,8 +41,8 @@ class Mi_clase
 end
 
 class Mi_clase_t_regex
-  include A
-  singleton_class.include A
+  include Origen
+  singleton_class.include Origen
   def foo(param1, param2)
     'foo'
   end
