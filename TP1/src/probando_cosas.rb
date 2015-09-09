@@ -43,11 +43,11 @@ module A
   end
 
   def mandatory
-    proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.first == :req}}
+    proc{|unMetodo| instance_method(unMetodo).parameters.select{|type,_| type == :req}}
   end
 
   def optional
-    proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.first == :opt}}
+    proc{|unMetodo| instance_method(unMetodo).parameters.select{|type,_| type == :opt}}
   end
 
   def neg (condition)

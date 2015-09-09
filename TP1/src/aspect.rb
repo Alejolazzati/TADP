@@ -47,6 +47,10 @@ class Aspect
       end
     end
 
+    if origenes.empty?
+      raise ArgumentError.new 'Origen vacio'
+    end
+
     return origenes
   end
 
