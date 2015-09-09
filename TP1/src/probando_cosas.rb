@@ -6,12 +6,12 @@ module A
 
   # aca le harcodeo una transformacion. Lo que hace es redefinir los mensajes que cumplan las
   # condiciones del where, haciendo devolver 'HOla'
-  def transform (*param)
-    param.flatten.each {|metodo| send(:define_method, metodo, proc{'HOla'})}
+  def transform (*methods_found)
+    methods_found.flatten.each {|a_method| send(:define_method, a_method, proc{'HOla'})}
   end
 
   def where (*conditions)
-      instance_methods.select{|a_method| allSatisfy(conditions, a_method)}
+    public_and_private_methods.select{|a_method| allSatisfy(conditions, a_method)}
   end
 
   def allSatisfy (*conditions, a_method)
@@ -31,7 +31,7 @@ module A
   end
 
   def public_and_private_methods
-    instance_methods + private_methods
+    instance_methods + private_instance_methods
   end
 
   def has_parameters(n, tipo = proc{|unMetodo| instance_method(unMetodo).parameters})
@@ -59,6 +59,14 @@ end
 class Object
   def define_method (a, b)
     define_singleton_method a, b
+  end
+
+  def instance_method (a_method)
+    singleton_class.instance_method a_method
+  end
+
+  def private_instance_methods
+    private_methods
   end
 
   def instance_methods

@@ -29,6 +29,28 @@ class Pepe_test
   end
 end
 
+class Mi_clase
+  include A
+  singleton_class.include A
+  def foo(p1, p2, p3, p4='a', p5='b', p6='c')
+    'foo'
+  end
+  def bar(p1, p2='a', p3='b', p4='c')
+    'bar'
+  end
+end
+
+class Mi_clase_t_regex
+  include A
+  singleton_class.include A
+  def foo(param1, param2)
+    'foo'
+  end
+  def bar(param1)
+    'bar'
+  end
+end
+
 module ModuleA_test
 
 end
@@ -39,6 +61,8 @@ end
 
 pepita_test = Pepita_test.new
 pepe_test = Pepe_test.new
+obj_mi_clase = Mi_clase.new
+o_mi_clase_regex = Mi_clase_t_regex.new
 
 describe 'Test donde se verifica que las distintas condiciones validen correctamente' do
 
@@ -82,5 +106,31 @@ describe 'Test donde se verifica que las distintas condiciones validen correctam
     expect(pepe_test.neg(pepe_test.name(/metodo_pri.ad./)).call :metodo_privado).to be false
   end
 
+  it 'true de has_parameter, mandatory y optional. Test de enunciado del tp para objetos' do
+    expect(obj_mi_clase.has_parameters(3, obj_mi_clase.mandatory).call :foo).to be true
+    expect(obj_mi_clase.has_parameters(6).call :foo).to be true
+    expect(obj_mi_clase.has_parameters(3, obj_mi_clase.optional).call :foo).to be true
+    expect(obj_mi_clase.has_parameters(3, obj_mi_clase.optional).call :bar).to be true
+  end
 
+  it 'false de has_parameter, mandatory y optional. Test de enunciado del tp para objetos' do
+    expect(obj_mi_clase.has_parameters(3, obj_mi_clase.mandatory).call :bar).to be false
+    expect(obj_mi_clase.has_parameters(6).call :bar).to be false
+    expect(obj_mi_clase.has_parameters(4, obj_mi_clase.optional).call :foo).to be false
+    expect(obj_mi_clase.has_parameters(2, obj_mi_clase.optional).call :bar).to be false
+  end
+
+  it 'true de has_parameter, mandatory y optional. Test de enunciado del tp para Clase' do
+    expect(Mi_clase.has_parameters(3, Mi_clase.mandatory).call :foo).to be true
+    expect(Mi_clase.has_parameters(6).call :foo).to be true
+    expect(Mi_clase.has_parameters(3, Mi_clase.new.optional).call :foo).to be true
+    expect(Mi_clase.has_parameters(3, Mi_clase.new.optional).call :bar).to be true
+  end
+
+  it 'true de has_parameter, mandatory y optional. Test de enunciado del tp para objetos' do
+    expect(o_mi_clase_regex.has_parameters(1, /param.*/).call :bar).to be true
+    expect(o_mi_clase_regex.has_parameters(2, /param.*/).call :foo).to be true
+    expect(o_mi_clase_regex.has_parameters(3, /param.*/).call :bar).to be false
+    expect(o_mi_clase_regex.has_parameters(3, /param.*/).call :foo).to be false
+  end
 end
