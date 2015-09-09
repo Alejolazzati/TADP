@@ -6,25 +6,10 @@ class Aspect
 
     origenes = select_origins(*parametros)
 
-    clases_y_modulos = clases_de(*origenes).concat modulos_de(*origenes)
-
-    clases_y_modulos.each do
-     |unaClase|
-      unaClase.include(A)
-      unaClase.singleton_class.include(A)
-
-      unaClase.send(:define_method, :nuevo_metodo, bloque) #ya no seria necesario
-
-      unaClase.instance_eval &bloque # con esto se ejecuta tod el trasnform con sus condiciones
-    end
-
-    (origenes - clases_y_modulos).each do
-      |unaInstancia|
-      unaInstancia.singleton_class.include(A)
-
-      unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque) #ya no seria necesario
-
-      unaInstancia.instance_eval &bloque # con esto se ejecuta tod el trasnform con sus condiciones
+    origenes each do
+    |unOrigen|
+      unOrigen.singleton_class.include(A)
+      unOrigen.instance_eval &bloque
     end
   end
 
