@@ -34,6 +34,10 @@ module A
     instance_methods + private_methods
   end
 
+  def neg (condition)
+    proc{|a_method| not(condition.call a_method)}
+  end
+
 end
 
 class Object
