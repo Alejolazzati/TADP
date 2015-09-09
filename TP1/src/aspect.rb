@@ -60,16 +60,3 @@ class Aspect
 
 
 end
-
-
-
-=begin
-    clases = origenes.select { |o| o.instance_of? Class }
-    clases.each { |c| c.include(A) }
-
-    instancias = origenes - clases
-    instancias.each { |i| i.extend(A) }
-
-    clases.each { |c| c.send(:define_method, :nuevo_metodo, bloque) }
-    instancias.each { |i| i.singleton_class.send(:define_method, :nuevo_metodo, bloque) }
-=end
