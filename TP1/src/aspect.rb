@@ -6,20 +6,26 @@ class Aspect
 
     origenes = select_origins(*parametros)
 
+
+
+=begin
     clases_y_modulos = clases_de(*origenes).concat modulos_de(*origenes)
 
     clases_y_modulos.each do
      |unaClase|
       unaClase.include(A)
+      # Aca iria el instance_eval bloque
       unaClase.send(:define_method, :nuevo_metodo, bloque)
+      #desincluir
     end
 
     (origenes - clases_y_modulos).each do
       |unaInstancia|
       unaInstancia.singleton_class.include(A)
       unaInstancia.singleton_class.send(:define_method, :nuevo_metodo, bloque)
+      #desincluir
     end
-
+=end
   end
 
   def self.select_origins(*parametros)
@@ -52,6 +58,9 @@ class Aspect
     origenes.select { |o| o.instance_of? Module }
   end
 
+  def where (*condiciones)
+
+  end
 
 end
 
