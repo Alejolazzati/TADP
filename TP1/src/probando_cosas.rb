@@ -58,22 +58,9 @@ module A
     2
   end
 
-=begin
-
-  def methods_with_parameters(n)
-    instance_methods.select do
-      |unMetodo|
-      method(unMetodo).parameters.length == n
-    end
+  def neg (condition)
+    proc{|a_method| not(condition.call a_method)}
   end
-
-  def methods_with_parameters_with(n, regex)
-    instance_methods.select do
-      |unMetodo|
-      method(unMetodo).parameters.select{|param| param.first.to_s =~ regex}.length == n
-    end
-  end
-=end
 
 end
 

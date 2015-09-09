@@ -72,4 +72,10 @@ describe 'Test donde se verifica que las distintas condiciones validen correctam
     expect(pepe_test.is_public.call :metodo).to be false
   end
 
+  it 'neg debe negar la condicion' do
+    #expect(pepe_test.neg(name(/ma.ar/)).call :metodo_privado).to be true
+    #expect(pepe_test.neg(name(/metodo_pri.ad./)).call :matar).to be true
+  end
+
+
 end
