@@ -11,11 +11,11 @@ module A
   end
 
   def where (*conditions)
-      instance_methods.select {|a_method| allSatisfy conditions, a_method}
+      instance_methods.select{|a_method| allSatisfy(conditions, a_method)}
   end
 
   def allSatisfy (*conditions, a_method)
-    conditions.flatten.all? {|a_condition| a_condition.call a_method}
+    conditions.flatten.all? {|a_condition| a_condition.call(a_method)}
   end
 
   def name (reg_ex)
@@ -34,28 +34,20 @@ module A
     instance_methods + private_methods
   end
 
-  def has_parameters(n, tipo = 0)
-      proc{ |unMetodo|
-        parametros = new.method(unMetodo).parameters
-
-        total = case tipo
-          when 0 then
-            parametros.length
-          when 1 then
-            parametros.select{|param| param.first.to_s=~/req/}.length
-          when 2 then
-            parametros.select{|param| param.first.to_s=~/opt/}.length
-        end
-
-       total == n}
+  def has_parameters(n, tipo = proc{|unMetodo| instance_method(unMetodo).parameters})
+    if tipo.instance_of? Regexp
+      proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.last =~ tipo}.length == n}
+    else
+      proc{ |unMetodo| tipo.call(unMetodo).length == n}
+    end
   end
 
   def mandatory
-    1
+    proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.first == :req}}
   end
 
   def optional
-    2
+    proc{|unMetodo| instance_method(unMetodo).parameters.select{|param| param.first == :opt}}
   end
 
   def neg (condition)
