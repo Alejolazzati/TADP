@@ -1,6 +1,6 @@
 module condicion
 
-  def where
+  def where(*condiciones)
 
   end
 
