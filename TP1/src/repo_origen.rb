@@ -11,6 +11,12 @@ class RepoOrigen
     origenes.each {|origen| impostores.add(Impostor.new(origen)) }
   end
 
+  def where(*condiciones)
+    impostores.each do
+    |impostor|
+        impostor.filtraMetodos(condiciones)
+      end
+  end
 
 
 end

@@ -7,6 +7,7 @@ class Aspect
     origenes = select_origins(*parametros)
     repoOrigen = RepoOrigen.new(origenes)
 
+    repoOrigen.instance_eval &bloque
 
   end
 
@@ -37,17 +38,4 @@ class Aspect
 
     return origenes
   end
-
-  def self.clases_de(*origenes)
-    origenes.select { |o| o.instance_of? Class }
-  end
-
-  def self.modulos_de(*origenes)
-    origenes.select { |o| o.instance_of? Module }
-  end
-
-  def where (*condiciones)
-
-  end
-
 end
