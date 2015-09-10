@@ -1,5 +1,8 @@
 class Impostor
 
+  include condicion
+  include transformacion
+
   attr_accessor :origen, :metodos_filtrados
 
   def initialize(origen)

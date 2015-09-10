@@ -1,8 +1,5 @@
 class RepoOrigen
 
-  include condicion
-  include transformacion
-
   attr_accessor :origenes, :impostores
 
   def initialize(*origenes)
