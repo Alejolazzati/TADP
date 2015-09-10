@@ -1,7 +1,9 @@
 module transformacion
 
-  def transform
+  def redirect_to(target)
+    proc {|method| }
 
   end
-  
+
+
 end

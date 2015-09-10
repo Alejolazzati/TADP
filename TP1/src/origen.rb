@@ -1,20 +1,30 @@
-class Impostor
+class Origen
 
   include condicion
   include transformacion
 
-  attr_accessor :origen, :metodos_filtrados
+  attr_accessor :fuente, :metodos_filtrados
 
-  def initialize(origen)
-    @origen = origen
+  def initialize(fuente)
+    @fuente = fuente
   end
 
-  def metodos_filtrados(*condiciones)
+  def where(*condiciones)
     @metodos_filtrados = self.all_methods.select do
     |method|
         condiciones.all? {|condicion|condicion.call(method)}
-      end
+    end
+
   end
+
+  def transform(&bloque)
+    @metodos_filtrados.each do
+    |metodo|
+      self.instance_exec(metodo,&bloque)
+      self.transformar_posta(metodo)
+    end
+  end
+
 
 
   def target()

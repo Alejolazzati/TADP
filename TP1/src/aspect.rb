@@ -1,13 +1,17 @@
 require_relative '../src/probando_cosas'
 
 class Aspect
+  attr_accessor :origenes
 
   def self.on (*parametros, &bloque)
 
-    origenes = select_origins(*parametros)
-    repoOrigen = RepoOrigen.new(origenes)
-
-    repoOrigen.instance_eval &bloque
+    fuentes = select_origins(*parametros)
+    fuentes.each do
+      |fuente|
+      origen = Origen.new(fuente)
+      @origenes.add(origen)
+      origen.instance_eval &bloque
+    end
 
   end
 
