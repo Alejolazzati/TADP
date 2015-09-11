@@ -21,11 +21,11 @@ class Origen
   def transform(*metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|
-      @real_method = metodo
-      alias_method :old_method, metodo #quizas metodo.to_sym
+      @real_method = metodo[0]
+      target.send(:alias_method, :old_method, metodo[0]) #quizas metodo.to_sym
       @metodo_alias = :old_method
-      transformacion = proc {|method, logic_transformada| self.fuente.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
-      transformacion.call(metodo,&bloque)#quizas sin &
+      transformacion = proc {|method, logic_transformada| self.target.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
+      transformacion.call(metodo[0],bloque)#quizas sin &
 
     end
   end

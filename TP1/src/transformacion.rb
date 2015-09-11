@@ -1,15 +1,15 @@
 module Transformacion
 
   def before(&logic)
-    proc {logic.call; self.fuente.send(self.metodo_alias)}
+    logic.call; self.fuente.send(self.metodo_alias)
   end
 
   def after(&logic)
-    proc {self.fuente.send(self.metodo_alias); logic.call}
+    self.fuente.send(self.metodo_alias); logic.call
   end
 
   def instead_of(&logic)
-    proc {logic.call}
+    logic.call
   end
 
   def redirect_to(target)
