@@ -22,10 +22,11 @@ class Origen
     metodos_filtrados.each do
       |metodo|
       @real_method = metodo
-      alias_method :old_method, metodo #quizas metodo.to_sym
+      target.send(:alias_method, :old_method, metodo) #quizas metodo.to_sym
       @metodo_alias = :old_method
-      transformacion = proc {|method, logic_transformada| self.fuente.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
-      transformacion.call(metodo,&bloque)#quizas sin &
+      preparar_transformacion = self.instance_eval &bloque
+      hacer_transformacion = proc {|method, &logic_transformada| fuente.send(:define_method, method, &logic_transformada)}#quizas haya que hacer target.send
+      hacer_transformacion.call(metodo,&preparar_transformacion)#quizas sin &
 
     end
   end
@@ -35,7 +36,7 @@ class Origen
   end
 
   def all_methods
-    target().private_instance_methods + target().public_instance_methods
+    target.private_instance_methods + target.public_instance_methods
   end
 
 

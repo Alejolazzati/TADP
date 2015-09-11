@@ -12,8 +12,8 @@ module Transformacion
     proc {logic.call}
   end
 
-  def redirect_to(target)
-    proc {target.send(self.real_method)}
+  def redirect_to(objetivo)
+    proc {objetivo.send(self.real_method)}
   end
 
   def inject(*hash)
@@ -24,7 +24,7 @@ module Transformacion
     viejos_parametros = self.method(self.real_method).parameters
     hash.each {|hash|self.set_hash(hash,viejos_parametros) }
   end
-  
+
 #hash [(key,value)]
 #viejos_parametros [(mode,key)]
 
