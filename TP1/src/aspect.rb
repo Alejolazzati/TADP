@@ -4,12 +4,12 @@ class Aspect
   attr_accessor :origenes
 
   def self.on (*parametros, &bloque)
-
+    @origenes = Array.new
     fuentes = select_origins(*parametros)
     fuentes.each do
       |fuente|
       origen = Origen.new(fuente)
-      @origenes.add(origen)
+      @origenes << origen
       origen.instance_eval &bloque
     end
 
@@ -40,6 +40,6 @@ class Aspect
       raise ArgumentError.new 'Origen vacio'
     end
 
-    return origenes
+    origenes
   end
 end
