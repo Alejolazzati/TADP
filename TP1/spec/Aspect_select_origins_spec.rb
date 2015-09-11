@@ -57,7 +57,8 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
       expect(Aspect.select_origins(/A_test|B_test/)).to contain_exactly(ModuleA_test, ModuleB_test)
     end
 
-    it 'deberia lanzar excepcion de origen vacio ya que los objetos concretos no matchean con la regex' do
+
+    it 'deberia devolver la lista vacia ya que los objetos concretos no matchean con la regex' do
 
       expect{Aspect.select_origins(/pepe_test|pepita_test/)}.to raise_error(ArgumentError, 'Origen vacio')
     end
@@ -67,7 +68,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
 
   describe 'Test de Aspect con Expresiones Regulares, clases, modules y instancias' do
 
-    it 'regex no encontrada lanza excepcion origins vacio' do
+    it 'regex no encontrada retorna origins vacio' do
 
       expect{Aspect.select_origins(/Regex no existente/)}.to raise_error(ArgumentError, 'Origen vacio')
     end
