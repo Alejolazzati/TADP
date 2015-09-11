@@ -1,25 +1,27 @@
-require_relative '../src/origen'
-
 class Aspect
+  attr_accessor :origenes
 
   def self.on (*parametros, &bloque)
-
-    origenes = select_origins(*parametros)
-
-    origenes each do
-    |unOrigen|
-      unOrigen.singleton_class.include(Origen)
-      unOrigen.instance_eval &bloque
+    @origenes = Array.new
+    fuentes = select_origins(*parametros)
+    fuentes.each do
+      |fuente|
+      origen = Origen.new(fuente)
+      @origenes << origen
+      origen.instance_eval &bloque
     end
+
   end
 
-  def self.select_origins(*parametros)
-    totales = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
 
-    # para validar que tire error al no recibir parametros
+
+  def self.select_origins(*parametros)
+
     if parametros.empty?
       raise ArgumentError.new 'wrong number of arguments (0 for +1)'
     end
+
+    totales = (Object.constants.map(&Object.method(:const_get)).grep(Class) + Object.constants.map(&Object.method(:const_get)).grep(Module)).uniq
 
     origenes = Array.new
 
@@ -36,16 +38,6 @@ class Aspect
       raise ArgumentError.new 'Origen vacio'
     end
 
-    return origenes
+    origenes
   end
-
-  def self.clases_de(*origenes)
-    origenes.select { |o| o.instance_of? Class }
-  end
-
-  def self.modulos_de(*origenes)
-    origenes.select { |o| o.instance_of? Module }
-  end
-
-
 end
