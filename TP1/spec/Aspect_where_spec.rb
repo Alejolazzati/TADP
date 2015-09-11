@@ -54,10 +54,10 @@ describe 'Test de condiciones concretas unitarias' do
     expect(visibility).to contain_exactly()
   end
 
-=begin
+
 #c
    it 'foo tiene 3 parametros mandatory' do
-    sarlompa =origen.instance_eval {where has_parameters(3, mandatory)}
+    sarlompa = origen.instance_eval {where has_parameters(3, mandatory)}
     expect(sarlompa).to contain_exactly(:foo)
   end
 
@@ -73,12 +73,12 @@ describe 'Test de condiciones concretas unitarias' do
 #d
   it 'foo y bar tienen 4 parametros que matchean con la regex' do
     sarlompa =origen.instance_eval {where has_parameters(4, /p*/)}
-    expect(sarlompa).to contain_exactly(:foo, :bar)
+    expect(sarlompa).to contain_exactly(:bar)
   end
 
  it 'solo foo tienen 5 al menos parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval {where has_parameters(5, /p*/)}
-    expect(sarlompa).to contain_exactly(:foo, :bar)
+    sarlompa =origen.instance_eval {where has_parameters(6, /p*/)}
+    expect(sarlompa).to contain_exactly(:foo)
   end
 
   it 'nadie 7 al menos parametros que matchean con la regex' do
@@ -86,5 +86,5 @@ describe 'Test de condiciones concretas unitarias' do
     expect(sarlompa).to contain_exactly()
   end
 
-=end
+
 end

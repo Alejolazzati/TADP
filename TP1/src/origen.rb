@@ -6,16 +6,10 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :fuente, :target, :premethods, :postmethods, :real_method, :parameters, :injected_parameters
+  attr_accessor :fuente, :real_method, :alias_method
 
   def initialize(fuente)
     @fuente = fuente
-    @target = nil
-    @premethods = nil
-    @postmethods = nil
-    @core_method = nil
-    @parameters = nil
-    @injected_parameters = nil
   end
 
   def where(*condiciones)
@@ -27,10 +21,11 @@ class Origen
 
   def transform(*metodos_filtrados, &bloque)
     metodos_filtrados.each do
-    |metodo|
+      |metodo|
       @real_method = metodo
+      alias_method :old_method, metodo #quizas metodo.to_sym
+      @alias_method = :old_method
       self.instance_exec(metodo, &bloque)
-      self.transformar_posta
     end
   end
 

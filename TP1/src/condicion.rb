@@ -17,12 +17,12 @@ module Condicion
   end
 
   def has_parameters(cant, arg_type = optional_mandatory)
-    condition = arg_type.instance_of?(Regexp) ?  name(arg_type) : arg_type##TODO name(arg_type) en vez de type_regex(arg_type)
-    proc {|a_method| (target.instance_method(a_method).parameters.count condition ) == cant}
+    condition = arg_type.instance_of?(Regexp) ?  type_regex(arg_type) : arg_type##TODO name(arg_type) en vez de type_regex(arg_type)
+    proc {|a_method| (target.instance_method(a_method).parameters.count &condition ) == cant}
   end
 
   def type_regex(regex)
-    proc{|_,nom|  nom =~ regex }
+    proc{|_,nom|  nom.to_s =~ regex }
   end
   def mandatory
     proc {|mode,_| mode == :req }
