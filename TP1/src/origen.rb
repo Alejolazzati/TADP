@@ -34,12 +34,12 @@ class Origen
     end
   end
 
-  def target
-    (self.instance_of?(Class) || self.instance_of?(Module)) ? self : self.singleton_class
+  def target(fuente)
+    (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class
   end
 
   def all_methods
-    target.private_instance_methods + target.public_instance_methods
+    target(fuente).private_instance_methods + target(fuente).public_instance_methods
   end
 
 

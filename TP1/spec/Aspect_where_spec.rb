@@ -18,7 +18,7 @@ describe 'Test de condiciones concretas unitarias' do
   }
 #a
   it 'name con (/fo{2}/) ' do
-    selector = origen.where name(/fo{2}/)
+    selector = origen.instance_eval {where name(/fo{2}/)}
     expect(selector).to contain_exactly(:foo)
   end
 =begin
