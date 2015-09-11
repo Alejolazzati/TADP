@@ -12,7 +12,7 @@ class MiClase
   end
 end
 
-describe 'Test de condiciones concretas unitarias' do
+describe 'Test de condiciones concretas' do
 
   let(:origen) {
     Origen.new(MiClase)

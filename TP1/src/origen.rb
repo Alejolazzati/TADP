@@ -26,7 +26,6 @@ class Origen
       @metodo_alias = :old_method
       transformacion = proc {|method, logic_transformada| self.target.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
       transformacion.call(metodo[0],bloque)#quizas sin &
-
     end
   end
 
@@ -35,7 +34,7 @@ class Origen
   end
 
   def all_methods
-    target().private_instance_methods + target().public_instance_methods
+    target.private_instance_methods + target.public_instance_methods
   end
 
 
