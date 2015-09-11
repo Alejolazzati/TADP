@@ -6,7 +6,7 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :fuente, :real_method, :alias_method
+  attr_accessor :fuente, :real_method, :metodo_alias
 
   def initialize(fuente)
     @fuente = fuente
@@ -14,18 +14,19 @@ class Origen
 
   def where(*condiciones)
     self.all_methods.select do
-    |method|
+      |method|
       condiciones.all? { |condicion| condicion.call(method) }
     end
   end
-
   def transform(*metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|
       @real_method = metodo
       alias_method :old_method, metodo #quizas metodo.to_sym
-      @alias_method = :old_method
-      self.instance_exec(metodo, &bloque)
+      @metodo_alias = :old_method
+      transformacion = proc {|method, logic_transformada| self.fuente.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
+      transformacion.call(metodo,&bloque)#quizas sin &
+
     end
   end
 
