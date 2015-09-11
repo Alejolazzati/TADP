@@ -1,5 +1,3 @@
-require_relative '../src/probando_cosas'
-
 class Aspect
   attr_accessor :origenes
 
