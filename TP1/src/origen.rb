@@ -12,7 +12,7 @@ module Origen
   def where (*conditions)
     public_and_private_methods.select{|a_method| allSatisfy(conditions, a_method)}
   end
-
+0
   def allSatisfy (*conditions, a_method)
     conditions.flatten.all? {|a_condition| a_condition.call(a_method)}
   end
