@@ -9,8 +9,13 @@ module Transformacion
   def instead_of(&logic)
     self.core_method=logic
   end
-  def redirect_to(target)
-    self.target=target
+  def redirect_to(otro)
+    self.metodos.each{ |unMetodo| target.define_method(unMetodo,proc {
+                                                        |*args|
+                                                      
+                                                      otro.send(unMetodo,args)
+
+                                                    })}
     self.core_method=target.origin_method(name)
     self.method=target.origin_method(name)
   end
@@ -21,7 +26,7 @@ module Transformacion
       target.define_method(unMetodo,proc {
                              |*args|
                              hasht.each{|key,value| args[key]=value}
-                             target.instance_eval(&old)
+                             old.bind(taget).call(args)
 
                                    })
 
