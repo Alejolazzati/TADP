@@ -28,7 +28,7 @@ class Origen
       transformacion.call(metodo[0],bloque)#quizas sin &
     end
   end
-
+   
   def target
     (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class
   end
