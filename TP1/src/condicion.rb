@@ -1,7 +1,7 @@
 module Condicion
 
   def name (reg_ex)
-    proc {|a_method| a_method.to_s =~ reg_ex}
+    proc {|a_method| a_method.match reg_ex}
   end
 
   def is_public

@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../src/Aspect'
+require_relative '../src/aspect'
 
 #estructuras para testear
 class Pepita_test
@@ -60,7 +60,7 @@ describe 'Test basicos de Aspect con clases, modules y instancias por separado' 
 
     it 'deberia devolver la lista vacia ya que los objetos concretos no matchean con la regex' do
 
-      expect{Aspect.select_origins(/pepe_test|pepita_test/)}.to raise_error(ArgumentError, 'Origen vacio')
+      expect{Aspect.select_origins(/objeto_que_no_existe/)}.to raise_error(ArgumentError, 'Origen vacio')
     end
 
   end
