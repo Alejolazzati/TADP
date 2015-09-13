@@ -1,19 +1,23 @@
 module Transformacion
 
   def before(&logic)
-    logic.call; self.fuente.send(self.metodo_alias)
+    target.define_method(real_method,proc{|args|
+                                      logic.bind(target).call(target,alias_method,args)})
   end
 
   def after(&logic)
-    self.fuente.send(self.metodo_alias); logic.call
+
+  target.define_method(real_method,proc{|args| alias_method.bind(target).call(args)
+                                  logic.bind(target).call(target,args)})
   end
 
   def instead_of(&logic)
-    logic.call
+    target.define_method(real_method,proc{|args|
+                                    logic.bind(target).call(target,args)})
   end
 
   def redirect_to(objetivo)
-    proc {objetivo.send(self.real_method)}
+    target.define_method(real_method,proc {|args| objetivo.send(self.real_method)})
   end
 
   def inject(*hash)
