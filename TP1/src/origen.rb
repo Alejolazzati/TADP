@@ -6,7 +6,7 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :fuente, :real_method, :metodo_alias
+  attr_accessor :fuente, :metodo_original, :metodo_alias
 
   def initialize(fuente)
     @fuente = fuente
@@ -18,17 +18,25 @@ class Origen
       condiciones.all? { |condicion| condicion.call(method) }
     end
   end
-  def transform(*metodos_filtrados, &bloque)
-    metodos_filtrados.each do
+
+  def transform(*metodos_filtrados, &transformaciones)
+    metodos_filtrados.flatten.each do
       |metodo|
-      @real_method = metodo[0]
-      target.send(:alias_method, :old_method, metodo[0]) #quizas metodo.to_sym
-      @metodo_alias = :old_method
-      transformacion = proc {|method, logic_transformada| self.target.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
-      transformacion.call(metodo[0],bloque)#quizas sin &
+      un_alias = self.definir_metodo_alias(metodo)
+
+      self.metodo_original = metodo
+      self.metodo_alias = un_alias
+
+      self.instance_eval &transformaciones
     end
   end
-   
+
+  def definir_metodo_alias(metodo)
+    nuevo_nombre = (metodo.to_s + '_alias').to_sym
+    target.send(:alias_method, nuevo_nombre, metodo) unless (target.instance_methods.include? nuevo_nombre)
+    nuevo_nombre
+  end
+
   def target
     (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class
   end

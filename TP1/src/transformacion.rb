@@ -16,21 +16,25 @@ module Transformacion
     proc {objetivo.send(self.real_method)}
   end
 
-  def inject(*hash)
-    proc {nuevos_parametros = get_nuevos_parametros(hash);self.fuente.send(self.real_method, *nuevos_parametros)}
+  def inject(*hashes)
+
+    parametros = target.instance_method(self.metodo_original).parameters.map{|p| p.last}
+    ejecucion = lambda{|*param| self.send(self.metodo_alias, *param)}
+
+    args = []
+
+    bloque =  proc do
+      hashes.each do
+      |param, valor|
+        args[parametros.index param] = valor
+      end
+      ejecucion.curry"#{args}" #Currifico para que la lambda me acepte un array como parametro
+
+   end
+
+    target.send(:define_method, self.metodo_original, *args, &bloque)
   end
-
-  def get_nuevos_parametros(*hash)
-    viejos_parametros = self.method(self.real_method).parameters
-    hash.each {|hash|self.set_hash(hash,viejos_parametros) }
-  end
-
-#hash [(key,value)]
-#viejos_parametros [(mode,key)]
-
-  def set_hash(hash,array)
-
-  end
-  #holita.method(:m).parameters .index(holita.method(:m).parameters.find { |l,sim| sim == :p2 })
-
 end
+
+
+
