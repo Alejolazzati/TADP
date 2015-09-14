@@ -6,10 +6,11 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :fuente, :metodo_original, :metodo_alias
+  attr_accessor :fuente, :metodo_original, :metodo_alias, :lista_hashes
 
   def initialize(fuente)
     @fuente = fuente
+    @lista_hashes = []
   end
 
   def where(*condiciones)
@@ -22,6 +23,7 @@ class Origen
   def transform(*metodos_filtrados, &transformaciones)
     metodos_filtrados.flatten.each do
       |metodo|
+
       un_alias = self.definir_metodo_alias(metodo)
 
       self.metodo_original = metodo

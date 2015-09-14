@@ -1,38 +1,50 @@
 module Transformacion
 
   def before(&logic)
-    logic.call; self.fuente.send(self.metodo_alias)
+    target.define_method(real_method,proc{|args|
+                                      logic.bind(target).call(target,alias_method,args)})
   end
 
   def after(&logic)
-    self.fuente.send(self.metodo_alias); logic.call
+
+  target.define_method(real_method,proc{|args| alias_method.bind(target).call(args)
+                                  logic.bind(target).call(target,args)})
   end
 
   def instead_of(&logic)
-    logic.call
+    target.define_method(real_method,proc{|args|
+                                    logic.bind(target).call(target,args)})
   end
 
   def redirect_to(objetivo)
-    proc {objetivo.send(self.real_method)}
+    target.define_method(real_method,proc {|args| objetivo.send(self.real_method)})
   end
 
   def inject(*hashes)
 
     parametros = target.instance_method(self.metodo_original).parameters.map{|p| p.last}
-    ejecucion = lambda{|*param| self.send(self.metodo_alias, *param)}
+    metodo = target.instance_method(self.metodo_original)
+    claves = hashes.map{|un_hash| un_hash.keys}.flatten
+    valores = hashes.map{|un_hash| un_hash.values}.flatten
 
-    args = []
+    self.lista_hashes.concat(hashes)
 
     bloque =  proc do
-      hashes.each do
-      |param, valor|
-        args[parametros.index param] = valor
-      end
-      ejecucion.curry"#{args}" #Currifico para que la lambda me acepte un array como parametro
+      |*argumentos|
 
+      arg = argumentos
+
+      argumentos.each do
+        |un_arg|
+        if claves.include? un_arg
+          arg[claves.index un_arg] = valores[claves.index un_arg]
+        end
+      end
+
+      metodo.bind(self.class.new).curry"#{arg}"
    end
 
-    target.send(:define_method, self.metodo_original, *args, &bloque)
+    target.send(:define_method, self.metodo_original, &bloque)
   end
 end
 

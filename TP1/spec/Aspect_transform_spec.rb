@@ -42,29 +42,22 @@ end
 
 describe 'Test sobre la clase Suma, invocando al metodo sum con el primer parametro en 1' do
 
+  let(:origen) {
+    Origen.new(Suma)
+  }
+
   it 'Al inyectar 100 al segundo parametro del metodo sum, la cuenta deberia dar 101' do
 
-=begin
-  class Suma
-      alias_method(:alias, :sum)
-      def sum *args
-        args[1] = 100
-        self.send(:alias, *args)
-      end
+    bloque = proc do
+      inject(b: 100)
     end
 
-    a = Suma.new
-    expect(a.sum(1,50)).to eq(101)
-=end
-
-    Aspect.on Suma do
-      transform(where has_parameters(1, /b/)) do
-        inject(b: 100)
-      end
+    transformacion = proc do
+      transform (where has_parameters(1, /b/)), &bloque
     end
 
-    expect(Suma.new.methods.include? :sum_alias).to eq(true)
+    origen.instance_eval &transformacion
     expect(Suma.new.sum(1,2)).to eq(101)
-
   end
+
 end
