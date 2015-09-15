@@ -32,21 +32,20 @@ module Transformacion
     bloque =  proc do
       |*argumentos|
 
-      arg = argumentos
-
       argumentos.each do
         |un_arg|
         if claves.include? un_arg
-          arg[claves.index un_arg] = valores[claves.index un_arg]
+          argumentos[claves.index un_arg] = valores[claves.index un_arg]
         end
       end
 
-      metodo.bind(self.class.new).curry"#{arg}"
+      self.send(self.metodo_original, *argumentos)
    end
 
     target.send(:define_method, self.metodo_original, &bloque)
   end
 end
+
 
 
 

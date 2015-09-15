@@ -1,9 +1,14 @@
 class Aspect
   attr_accessor :origenes
 
-  def self.on (*parametros)
+  def self.on (*parametros, &bloque)
     fuentes = select_origins(*parametros)
-    fuentes.each {|fuente| origen = Origen.new(fuente); yield(origen)}
+    fuentes.each do
+      |fuente|
+      origen = Origen.new(fuente)
+      origen.instance_eval &bloque
+    end
+
   end
 
   def self.regexp_to_origins(regexp)

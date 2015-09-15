@@ -24,10 +24,8 @@ class Origen
     metodos_filtrados.flatten.each do
       |metodo|
 
-      un_alias = self.definir_metodo_alias(metodo)
-
       self.metodo_original = metodo
-      self.metodo_alias = un_alias
+      self.metodo_alias = self.definir_metodo_alias(metodo)
 
       self.instance_eval &transformaciones
     end
@@ -35,7 +33,7 @@ class Origen
 
   def definir_metodo_alias(metodo)
     nuevo_nombre = (metodo.to_s + '_alias').to_sym
-    target.send(:alias_method, nuevo_nombre, metodo) unless (target.instance_methods.include? nuevo_nombre)
+    self.target.send(:alias_method, nuevo_nombre, metodo) unless (target.instance_methods.include? nuevo_nombre)
     nuevo_nombre
   end
 

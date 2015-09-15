@@ -49,15 +49,16 @@ describe 'Test sobre la clase Suma, invocando al metodo sum con el primer parame
   it 'Al inyectar 100 al segundo parametro del metodo sum, la cuenta deberia dar 101' do
 
     bloque = proc do
-      inject(b: 100)
+      transform(where has_parameter(1, /b/)) do
+        inject(b: 100)
+      end
     end
 
-    transformacion = proc do
-      transform (where has_parameters(1, /b/)), &bloque
-    end
+    aspect = origen.instance_eval &bloque
 
-    origen.instance_eval &transformacion
-    expect(Suma.new.sum(1,2)).to eq(101)
+    aspect.instance_eval &bloque
+
+    expect(origen.sum(1,2)).to eq(101)
   end
 
 end
