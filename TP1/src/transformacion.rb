@@ -22,27 +22,25 @@ module Transformacion
 
   def inject(*hashes)
 
-    parametros = target.instance_method(self.metodo_original).parameters.map{|p| p.last}
-    metodo = target.instance_method(self.metodo_original)
-    claves = hashes.map{|un_hash| un_hash.keys}.flatten
-    valores = hashes.map{|un_hash| un_hash.values}.flatten
-
-    self.lista_hashes.concat(hashes)
+    Origen.claves = hashes.map{|un_hash| un_hash.keys}.flatten
+    Origen.valores = hashes.map{|un_hash| un_hash.values}.flatten
+    Origen.parametros = target.instance_method(self.metodo_original).parameters.map{|p| p.last}
 
     bloque =  proc do
       |*argumentos|
 
-      argumentos.each do
-        |un_arg|
-        if claves.include? un_arg
-          argumentos[claves.index un_arg] = valores[claves.index un_arg]
-        end
+      Origen.claves.each do
+        |una_clave|
+
+        posicion = Origen.parametros.index una_clave
+        argumentos[posicion] = Origen.valores[posicion]
+
       end
 
-      self.send(self.metodo_original, *argumentos)
+      super(*argumentos)
    end
 
-    target.send(:define_method, self.metodo_original, &bloque)
+    self.target.send(:define_method, self.metodo_original, &bloque)
   end
 end
 

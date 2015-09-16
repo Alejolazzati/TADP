@@ -1,5 +1,11 @@
 class Aspect
-  attr_accessor :origenes
+  attr_accessor :origenes, :claves, :valores, :parametros
+
+  def initialize(claves, valores, parametros)
+    @claves = claves
+    @valores = valores
+    @parametros = parametros
+  end
 
   def self.on (*parametros, &bloque)
     fuentes = select_origins(*parametros)
@@ -7,6 +13,7 @@ class Aspect
       |fuente|
       origen = Origen.new(fuente)
       origen.instance_eval &bloque
+
     end
 
   end
@@ -23,5 +30,5 @@ class Aspect
     origins = parametros.flat_map {|posible_origen| (posible_origen.is_a?(Regexp)) ? (self.regexp_to_origins posible_origen) : [posible_origen]}
     origins.empty? ? (raise ArgumentError.new 'Origen vacio') : origins.uniq
   end
-  
+
 end
