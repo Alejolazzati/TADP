@@ -4,9 +4,8 @@ require_relative 'transformacion'
 class Origen
 
   include Condicion
-  include Transformacion
 
-  attr_accessor :fuente, :real_method, :metodo_alias
+  attr_accessor :fuente
 
   def initialize(fuente)
     @fuente = fuente
@@ -21,11 +20,9 @@ class Origen
   def transform(*metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|
-      @real_method = metodo
-      target.send(:alias_method, :old_method, metodo) #quizas metodo.to_sym
-      @metodo_alias = :old_method
-      transformacion = proc {|method, logic_transformada| self.target.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
-      transformacion.call(metodo,bloque)#quizas sin &
+      yiel
+      Transformacion.new(target, metodo).transformate &bloque
+
     end
   end
 

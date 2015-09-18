@@ -1,4 +1,11 @@
-module Transformacion
+class Transformacion
+
+  def initialize()
+
+  end
+  def transformate
+    
+  end
 
   def before(&logic)
     logic.call; self.fuente.send(self.metodo_alias)
