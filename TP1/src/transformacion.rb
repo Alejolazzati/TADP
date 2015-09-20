@@ -1,10 +1,22 @@
 class Transformacion
 
-  def initialize()
-
+  def initialize(fuente, metodo_inicial)
+    @real_method  = metodo_inicial
+    @fuente = fuente
+    @inject = {}
+    @redirect_to = nil
+    @before = nil
+    @after = nil
+    @instead_of = nil
   end
   def transformate
-    
+    yield(self)
+
+    #va a ir saliendo a medida que haga los concretos
+  end
+
+  def redirect_to(objetivo)
+    proc {|*parametros,&bloque|objetivo.send(self.real_method,*parametros,&bloque)}
   end
 
   def before(&logic)
@@ -19,9 +31,7 @@ class Transformacion
     logic.call
   end
 
-  def redirect_to(objetivo)
-    proc {objetivo.send(self.real_method)}
-  end
+
 
   def inject(*hash)
     proc {nuevos_parametros = get_nuevos_parametros(hash);self.fuente.send(self.real_method, *nuevos_parametros)}

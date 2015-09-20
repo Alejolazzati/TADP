@@ -20,7 +20,6 @@ class Origen
   def transform(*metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|
-      yiel
       Transformacion.new(target, metodo).transformate &bloque
 
     end
