@@ -67,6 +67,25 @@ describe 'Test de transformaciones concretas' do
       expect(instancia.x).to eq(123)
 
     end
+
+  it 'after' do
+    optimus = Transformacion.new(MiClase, :m2)
+    optimus.instance_eval { transformate {  after do |instance, *args|
+      if @x > 100
+        2 * @x
+      else
+        @x
+      end
+    end
+    }}
+    instancia = MiClase.new
+    instancia.m2(10)
+    expect(instancia.x).to eq(10)
+    instancia.m2(200)
+    expect(instancia.x).to eq(400)
+# 400
+
+  end
 =begin
   context 'redirect' do
     it 'redireccionar saludo' do

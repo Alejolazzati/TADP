@@ -16,13 +16,17 @@ class Transformacion
     yield()
 
 
+
     metodo = @metodo
     real_method = @real_method
+    after = @after
     @target.send(:define_method, real_method.name) do
     |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 
-      instance_exec(*parametros, &metodo)
+
+      after.nil? ? instance_exec(*parametros, &metodo)
+      : instance_exec(*parameters, &after)
 
     end
 
@@ -37,6 +41,10 @@ class Transformacion
     @method = proc { |*parametros| instance_exec(self, *parametros, &nuevo_metodo) }
   end
 
+
+  def after(&after_code)
+    @after_method = proc { |*parameters| instance_exec(self, *parameters, &after_code)}
+  end
 
 
 
