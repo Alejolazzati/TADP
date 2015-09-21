@@ -16,11 +16,12 @@ class Transformacion
     yield()
 
 
+    metodo = @metodo
     @target.send(:define_method, @real_method.name) do
     |*parametros|
-      @metodo = @metodo.bind(self) if @metodo.is_a?(UnboundMethod)
+      metodo = metodo.bind(self) if @metodo.is_a?(UnboundMethod)
 
-      instance_exec(*parametros, &@metodo)
+      instance_exec(*parametros, &metodo)
 
     end
 
@@ -29,7 +30,8 @@ class Transformacion
 end
 
 def redirect_to(objetivo)
-  @metodo = proc { |*parametros| objetivo.send(@real_method.name, *parametros) }
+  real_method = @real_method.name
+  @metodo = proc { |*parametros| objetivo.send(real_method, *parametros) }
 end
 =begin
 def before(&logic)

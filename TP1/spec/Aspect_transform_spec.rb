@@ -39,8 +39,21 @@ describe 'Test de condiciones concretas' do
   it 'redireccionar basico' do
     optimus = Transformacion.new(A,:saludar)
     optimus.instance_eval { transformate {redirect_to(B.new)}}
-    expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
+    expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
 
   end
+
+  context 'redirect' do
+    it 'redireccionar saludo' do
+      Aspect.on A do
+        transform(where name(/saludar/)) do
+          redirect_to(B.new)
+        end
+      end
+
+      expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
+    end
+  end
+
 
 end
