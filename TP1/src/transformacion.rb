@@ -29,9 +29,9 @@ class Transformacion
 end
 
 def redirect_to(objetivo)
-  @metodo = proc { |*parametros| objetivo.send(self.real_method, *parametros) }
+  @metodo = proc { |*parametros| objetivo.send(@real_method.name, *parametros) }
 end
-
+=begin
 def before(&logic)
   logic.call; self.fuente.send(self.metodo_alias)
 end
@@ -60,3 +60,4 @@ end
 def set_hash(hash, array)
 end
 #holita.method(:m).parameters .index(holita.method(:m).parameters.find { |l,sim| sim == :p2 })
+=end
