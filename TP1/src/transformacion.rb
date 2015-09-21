@@ -1,7 +1,7 @@
 class Transformacion
 
   def initialize(fuente, metodo_inicial)
-    @real_method = fuente.instance_method(metodo_inicial)
+    @real_method = @metodo = fuente.instance_method(metodo_inicial)
     @target = fuente
     @inject = {}
     @redirect_to = nil
@@ -19,7 +19,7 @@ class Transformacion
     metodo = @metodo
     @target.send(:define_method, @real_method.name) do
     |*parametros|
-      metodo = metodo.bind(self) if @metodo.is_a?(UnboundMethod)
+      metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 
       instance_exec(*parametros, &metodo)
 
@@ -27,12 +27,15 @@ class Transformacion
 
   end
 
+  def redirect_to(objetivo)
+    p @real_method
+    real_method = @real_method.name
+    @metodo = proc { |*parametros| objetivo.send(real_method, *parametros) }
+  end
+
 end
 
-def redirect_to(objetivo)
-  real_method = @real_method.name
-  @metodo = proc { |*parametros| objetivo.send(real_method, *parametros) }
-end
+
 =begin
 def before(&logic)
   logic.call; self.fuente.send(self.metodo_alias)

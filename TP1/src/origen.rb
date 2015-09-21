@@ -12,21 +12,22 @@ class Origen
   end
 
   def where(*condiciones)
-    self.all_methods.select do
+    all_methods.select do
       |method|
       condiciones.all? { |condicion| condicion.call(method) }
-    end
+   end
   end
-  def transform(*metodos_filtrados, &bloque)
+  def transform(metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|
-      Transformacion.new(target, metodo).transformate &bloque
+      metodo
+      Transformacion.new(target, metodo).transformate &bloque#haciendo esto para una misma transformacion estoy haciendo el mismo build una y otra vez
 
     end
   end
 
   def target
-    (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class
+    (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class#el fuente.instance_of?(Class) debería estar de mas pero si lo saco me joden los test
   end
 
   def all_methods

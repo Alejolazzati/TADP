@@ -1,6 +1,7 @@
 require 'rspec'
 require_relative '../src/aspect'
 require_relative '../src/origen'
+require_relative '../src/transformacion'
 
 #estructuras para testear
 class A
@@ -16,7 +17,7 @@ class B
 end
 
 
-describe 'Test de condiciones concretas' do
+describe 'Test de transformaciones concretas' do
 
   let(:origen) {
     Origen.new(A)
@@ -42,7 +43,7 @@ describe 'Test de condiciones concretas' do
     expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
 
   end
-
+=begin
   context 'redirect' do
     it 'redireccionar saludo' do
       Aspect.on A do
@@ -55,5 +56,5 @@ describe 'Test de condiciones concretas' do
     end
   end
 
-
+=end
 end
