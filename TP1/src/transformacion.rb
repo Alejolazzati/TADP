@@ -3,13 +3,13 @@ class Transformacion
   def initialize(fuente, metodo_inicial)
     @real_method = @metodo = fuente.instance_method(metodo_inicial)
     @target = fuente
-    @inject = {}
+  #  @inject = {}
     @redirect_to = nil
-    @before = nil
+ #   @before = nil
     @after = nil
     @instead_of = nil
-    @logic = proc { metodo_inicial.clone.send(:bind, self) }
-    parametros = []
+#    @logic = proc { metodo_inicial.clone.send(:bind, self) }
+#    parametros = []
   end
 
   def transformate
@@ -26,7 +26,7 @@ class Transformacion
 
 
       after.nil? ? instance_exec(*parametros, &metodo)
-      : instance_exec(*parameters, &after)
+      : instance_exec(*parametros, &after)
 
     end
 
@@ -38,12 +38,12 @@ class Transformacion
   end
 
   def instead_of(&nuevo_metodo)
-    @method = proc { |*parametros| instance_exec(self, *parametros, &nuevo_metodo) }
+    @metodo = proc { |*parametros| instance_exec(self, *parametros, &nuevo_metodo) }
   end
 
 
-  def after(&after_code)
-    @after_method = proc { |*parameters| instance_exec(self, *parameters, &after_code)}
+  def after(&after)
+    @after = proc { |*parametros| instance_exec(self, *parametros, &after)}
   end
 
 
