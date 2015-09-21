@@ -17,7 +17,8 @@ class Transformacion
 
 
     metodo = @metodo
-    @target.send(:define_method, @real_method.name) do
+    real_method = @real_method
+    @target.send(:define_method, real_method.name) do
     |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 
@@ -28,10 +29,16 @@ class Transformacion
   end
 
   def redirect_to(objetivo)
-    p @real_method
     real_method = @real_method.name
     @metodo = proc { |*parametros| objetivo.send(real_method, *parametros) }
   end
+
+  def instead_of(&nuevo_metodo)
+    @method = proc { |*parametros| instance_exec(self, *parametros, &nuevo_metodo) }
+  end
+
+
+
 
 end
 
