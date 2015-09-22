@@ -30,6 +30,12 @@ class MiClase
   def m3(x)
     @x = x
   end
+  def hace_algo(p1, p2)
+    p1 + '-' + p2
+  end
+  def hace_otra_cosa(p2, ppp)
+    p2 + ':' + ppp
+  end
 end
 
 describe 'Test de transformaciones concretas' do
@@ -71,7 +77,6 @@ describe 'Test de transformaciones concretas' do
   it 'after' do
     optimus = Transformacion.new(MiClase, :m2)
     optimus.instance_eval { transformate {  after do |instance, *args|
-      p @x
       if @x > 100
         2 * @x
       else
@@ -98,6 +103,22 @@ describe 'Test de transformaciones concretas' do
 
   end
 
+  it 'inject' do
+    optimus = Transformacion.new(MiClase, :hace_algo)
+    optimus.instance_eval { transformate { inject(p2: 'bar')}}
+    instancia = MiClase.new
+#    expect(instancia.hace_algo("foo")).to eq("foo-bar") deberia poder recibir un param menos?
+    expect(instancia.hace_algo("foo", "foo")).to eq( "foo-bar")
+  end
+
+  it 'inject2' do
+    optimus = Transformacion.new(MiClase, :hace_otra_cosa)
+    optimus.instance_eval { transformate { inject(p2: 'bar')}}
+    instancia = MiClase.new
+    expect(instancia.hace_otra_cosa("foo", "foo")).to eq( "bar:foo")
+  end
+=begin
+=end
 =begin
   context 'redirect' do
     it 'redireccionar saludo' do
