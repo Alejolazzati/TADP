@@ -3,13 +3,7 @@ class Transformacion
   def initialize(fuente, metodo_inicial)
     @real_method = @metodo = fuente.instance_method(metodo_inicial)
     @target = fuente
-    #  @inject = {}
-    @redirect_to = nil
-    #   @before = nil
-    @after = nil
-    @instead_of = nil
-#    @logic = proc { metodo_inicial.clone.send(:bind, self) }
-#    parametros = []
+    @inject = {}
   end
 
   def transformate
@@ -20,9 +14,12 @@ class Transformacion
     real_method = @real_method
     after = @after
     before = @before
+    inject = @inject
     @target.send(:define_method, real_method.name) do
     |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
+
+      inject.each {|key,value| parametros[key]=value}
 
       sin_after = before.nil? ? instance_exec(*parametros, &metodo)
                               : instance_exec(*parametros, &before)
@@ -55,6 +52,9 @@ class Transformacion
       instance_exec(self, continuacion, *parametros, &before) }
   end
 
+  def inject(hasht)
+    @inject = hasht
+  end
 
 end
 
