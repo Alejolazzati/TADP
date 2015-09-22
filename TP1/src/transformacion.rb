@@ -3,9 +3,9 @@ class Transformacion
   def initialize(fuente, metodo_inicial)
     @real_method = @metodo = fuente.instance_method(metodo_inicial)
     @target = fuente
-  #  @inject = {}
+    #  @inject = {}
     @redirect_to = nil
- #   @before = nil
+    #   @before = nil
     @after = nil
     @instead_of = nil
 #    @logic = proc { metodo_inicial.clone.send(:bind, self) }
@@ -16,15 +16,17 @@ class Transformacion
     yield()
 
 
-
     metodo = @metodo
     real_method = @real_method
     after = @after
+    before = @before
     @target.send(:define_method, real_method.name) do
     |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 
-      sin_after = instance_exec(*parametros, &metodo)
+      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
+                              : instance_exec(*parametros, &before)
+
       after.nil? ? sin_after : instance_exec(*parametros, &after)
 
     end
@@ -42,9 +44,16 @@ class Transformacion
 
 
   def after(&after)
-    @after = proc { |*parametros| instance_exec(self, *parametros, &after)}
+    @after = proc { |*parametros| instance_exec(self, *parametros, &after) }
   end
 
+  def before(&before)
+    metodo = @metodo
+    @before = proc { |*parametros|
+      metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
+      continuacion = proc { |_, _, *new_parameters| metodo.call(*new_parameters) }
+      instance_exec(self, continuacion, *parametros, &before) }
+  end
 
 
 end
