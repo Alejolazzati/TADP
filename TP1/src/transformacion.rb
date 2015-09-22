@@ -17,8 +17,6 @@ class Transformacion
     inject = @inject
     @target.send(:define_method, real_method.name) do
     |*parametros|
-       p parametros unless inject.empty?
-       p inject unless inject.empty?
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
       inject.each {|index,value| parametros[index]= value}
 
