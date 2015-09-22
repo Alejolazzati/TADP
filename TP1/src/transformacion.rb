@@ -24,9 +24,8 @@ class Transformacion
     |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 
-
-      after.nil? ? instance_exec(*parametros, &metodo)
-      : instance_exec(*parametros, &after)
+      sin_after = instance_exec(*parametros, &metodo)
+      after.nil? ? sin_after : instance_exec(*parametros, &after)
 
     end
 

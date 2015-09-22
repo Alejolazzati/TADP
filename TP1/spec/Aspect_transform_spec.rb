@@ -60,8 +60,8 @@ describe 'Test de transformaciones concretas' do
       optimus = Transformacion.new(MiClase, :m3)
       optimus.instance_eval { transformate { instead_of do |instance, *args|
         @x = 123
-        p @x
       end } }
+      instancia = MiClase.new
       expect(MiClase.new.m3(10)).to eq(123)
       instancia.m3(10)
       expect(instancia.x).to eq(123)
@@ -71,6 +71,7 @@ describe 'Test de transformaciones concretas' do
   it 'after' do
     optimus = Transformacion.new(MiClase, :m2)
     optimus.instance_eval { transformate {  after do |instance, *args|
+      p @x
       if @x > 100
         2 * @x
       else
@@ -79,10 +80,9 @@ describe 'Test de transformaciones concretas' do
     end
     }}
     instancia = MiClase.new
-    instancia.m2(10)
-    expect(instancia.x).to eq(10)
-    instancia.m2(200)
-    expect(instancia.x).to eq(400)
+
+    expect(instancia.m2(10)).to eq(10)
+    expect(instancia.m2(200)).to eq(400)
 # 400
 
   end
