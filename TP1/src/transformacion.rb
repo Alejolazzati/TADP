@@ -17,12 +17,9 @@ class Transformacion
     inject = @inject
     @target.send(:define_method, real_method.name) do
     |*parametros|
-  #    p parametros unless inject.empty?
-  #    parametros[1] = "bar" unless inject.empty?
-  #    p parametros unless inject.empty?
+       p parametros unless inject.empty?
        p inject unless inject.empty?
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-     # inject = inject.map{|key,value| key =1, value  }
       inject.each {|index,value| parametros[index]= value}
 
       sin_after = before.nil? ? instance_exec(*parametros, &metodo)
@@ -59,7 +56,6 @@ class Transformacion
   def inject(hasht)
     parametros = @real_method.parameters.map {|_,sym| sym}
     @inject = hasht.map {|key, value| [parametros.find_index { |p| p == key }, value]}
-    p @inject
   end
 
 end
