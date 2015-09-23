@@ -72,62 +72,58 @@ describe 'Test de transformaciones "integradoras"' do
     expect(instancia.x).to eq(123)
   end
 
-=begin
+
   it 'after' do
-    optimus = Transformacion.new(MiClase, :m2)
-    optimus.instance_eval { transformate { after do |instance, *args|
-      if @x > 100
-        2 * @x
-      else
-        @x
+    Aspect.on MiClase do
+      transform(where name(/m2/)) do
+        after do |instance, *args|
+          if @x > 100
+            2 * @x
+          else
+            @x
+          end
+        end
       end
     end
-    } }
-    instancia = MiClase.new
 
     expect(instancia.m2(10)).to eq(10)
     expect(instancia.m2(200)).to eq(400)
   end
 
   it 'before' do
-    optimus = Transformacion.new(MiClase, :m1)
-    optimus.instance_eval { transformate { before do |instance, cont, *args|
-      @x = 10
-      new_args = args.map { |arg| arg * 10 }
-      cont.call(self, nil, *new_args)
-    end } }
-    instancia = MiClase.new
+    Aspect.on MiClase do
+      transform(where name(/m1/)) do
+        before do |instance, cont, *args|
+          @x = 10
+          new_args = args.map { |arg| arg * 10 }
+          cont.call(self, nil, *new_args)
+        end
+      end
+    end
     expect(instancia.m1(1, 2)).to eq(30)
     expect(instancia.x).to eq(10)
 
   end
 
   it 'inject' do
-    optimus = Transformacion.new(MiClase, :hace_algo)
-    optimus.instance_eval { transformate { inject(p2: 'bar') } }
-    instancia = MiClase.new
-#    expect(instancia.hace_algo("foo")).to eq("foo-bar") deberia poder recibir un param menos?
+    Aspect.on MiClase do
+      transform(where name(/hace_*/)) do
+        inject(p2: 'bar')
+      end
+    end
+    expect(instancia.hace_algo("foo")).to eq("foo-bar") #deberia poder recibir un param menos?
     expect(instancia.hace_algo("foo", "foo")).to eq("foo-bar")
-  end
-
-  it 'inject2' do
-    optimus = Transformacion.new(MiClase, :hace_otra_cosa)
-    optimus.instance_eval { transformate { inject(p2: 'bar') } }
-    instancia = MiClase.new
     expect(instancia.hace_otra_cosa("foo", "foo")).to eq("bar:foo")
   end
 
-  context 'redirect' do
-
-  end
-
-
-
   it 'transformacion compuesta del enunciado' do
-    optimus = Transformacion.new(B, :saludar)
-    optimus.instance_eval { transformate { inject(x: "Tarola"); redirect_to(A.new) } }
-
+    Aspect.on B do
+      transform(where name(/saludar/)) do
+        inject(x: "Tarola")
+        redirect_to(A.new)
+      end
+    end
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
-=end
+
 end
