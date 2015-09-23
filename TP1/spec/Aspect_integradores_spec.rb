@@ -42,9 +42,31 @@ describe 'Test de transformaciones "integradoras"' do
         p2 + ':' + ppp
       end
     end
+    class Golondrina
+      attr_accessor :sarasa
+
+      def initialize(p)
+        @sarasa = p
+      end
+
+      def sarlompa(p1)
+        @sarasa
+      end
+    end
+
   end
   let (:instancia) do
     instancia = MiClase.new
+  end
+
+  it 'test de juan' do
+    Aspect.on Golondrina do
+      transform(where name(/sarlompa/)) do
+        inject(p1: 'bar')
+      end
+    end
+    expect(Golondrina.new(5).sarlompa(7)).to eq(5)
+    expect(Golondrina.new(10).sarlompa(4)).to eq(10)
   end
 
   it 'redireccionar saludo' do

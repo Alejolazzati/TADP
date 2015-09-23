@@ -17,7 +17,7 @@ describe 'Test de condiciones concretas' do
   let(:origen) {
     Origen.new(MiClase)
   }
-#a
+
   it 'name con (/fo{2}/) ' do
     selector = origen.instance_eval { where name(/fo{2}/) }
     expect(selector).to contain_exactly(:foo)
@@ -43,7 +43,7 @@ describe 'Test de condiciones concretas' do
     selector = origen.instance_eval { where name(/foo/), name(/bar/) }
     expect(selector).to contain_exactly()
   end
-#b
+
   it 'metodo privado y regex bar' do
     visibility =origen.instance_eval { where name(/bar/), is_private }
     expect(visibility).to contain_exactly(:bar)
@@ -55,7 +55,7 @@ describe 'Test de condiciones concretas' do
   end
 
 
-#c
+
    it 'foo tiene 3 parametros mandatory' do
     sarlompa = origen.instance_eval {where has_parameters(3, mandatory)}
     expect(sarlompa).to contain_exactly(:foo)
@@ -70,7 +70,7 @@ describe 'Test de condiciones concretas' do
     sarlompa =origen.instance_eval {where has_parameters(6)}
     expect(sarlompa).to contain_exactly(:foo)
   end
-#d
+
   it 'foo y bar tienen 4 parametros que matchean con la regex' do
     sarlompa =origen.instance_eval {where has_parameters(4, /p*/)}
     expect(sarlompa).to contain_exactly(:bar)

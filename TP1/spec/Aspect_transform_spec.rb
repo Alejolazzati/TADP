@@ -44,26 +44,10 @@ describe 'Test de transformaciones concretas' do
     end
   end
 
-=begin
-
-
-
-  it 'redireccionar saludo' do
-
-    origen.instance_eval {transform :saludar  do
-      redirect_to(B.new)
-    end
-    }
-    expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
-
-  end
-
-=end
   it 'redireccionar basico' do
     optimus = Transformacion.new(A, :saludar)
     optimus.instance_eval { transformate { redirect_to(B.new) } }
     expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
-
   end
 
   it 'instead of' do
