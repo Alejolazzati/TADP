@@ -6,8 +6,8 @@ class Transformacion
     @inject = {}
   end
 
-  def transformate
-    yield()
+  def transformate(&bloquesin)
+    instance_eval &bloquesin
 
 
     metodo = @metodo

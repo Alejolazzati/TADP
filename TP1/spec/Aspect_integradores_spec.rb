@@ -5,7 +5,7 @@ require_relative '../src/transformacion'
 
 #estructuras para testear
 
-describe 'Test de transformaciones concretas' do
+describe 'Test de transformaciones "integradoras"' do
   before(:each) do
     class A
       def saludar(x)
@@ -43,41 +43,36 @@ describe 'Test de transformaciones concretas' do
       end
     end
   end
-
-=begin
-
-
+  let (:instancia) do
+    instancia = MiClase.new
+  end
 
   it 'redireccionar saludo' do
-
-    origen.instance_eval {transform :saludar  do
-      redirect_to(B.new)
+    Aspect.on A do
+      transform(where name(/saludar/)) do
+        redirect_to(B.new)
+      end
     end
-    }
-    expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
 
-  end
-
-=end
-  it 'redireccionar basico' do
-    optimus = Transformacion.new(A, :saludar)
-    optimus.instance_eval { transformate { redirect_to(B.new) } }
     expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
-
   end
+
 
   it 'instead of' do
-    optimus = Transformacion.new(MiClase, :m3)
-    optimus.instance_eval { transformate { instead_of do |instance, *args|
-      @x = 123
-    end } }
-    instancia = MiClase.new
+    Aspect.on MiClase do
+      transform(where name(/m3/)) do
+        instead_of do |instance, *args|
+          @x = 123
+        end
+      end
+    end
+
     expect(MiClase.new.m3(10)).to eq(123)
     instancia.m3(10)
     expect(instancia.x).to eq(123)
-
   end
 
+=begin
   it 'after' do
     optimus = Transformacion.new(MiClase, :m2)
     optimus.instance_eval { transformate { after do |instance, *args|
@@ -121,22 +116,12 @@ describe 'Test de transformaciones concretas' do
     instancia = MiClase.new
     expect(instancia.hace_otra_cosa("foo", "foo")).to eq("bar:foo")
   end
-=begin
-=end
 
   context 'redirect' do
-    it 'redireccionar saludo' do
-      Aspect.on A do
-        transform(where name(/saludar/)) do
-          redirect_to(B.new)
-        end
-      end
 
-      expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
-    end
   end
-=begin
-=end
+
+
 
   it 'transformacion compuesta del enunciado' do
     optimus = Transformacion.new(B, :saludar)
@@ -144,5 +129,5 @@ describe 'Test de transformaciones concretas' do
 
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
-
+=end
 end
