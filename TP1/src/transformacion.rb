@@ -8,8 +8,7 @@ class Transformacion
 
   def transformate(&bloquesin)
     instance_eval &bloquesin
-
-
+    
     metodo = @metodo
     real_method = @real_method
     after = @after
