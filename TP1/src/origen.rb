@@ -38,15 +38,15 @@ class Origen
   def definir(metodo)
 
     bloque_origen = proc do
-    |*args|
-        self.instancias[__method__].send(__method__, *args)
+    |una_instancia, *args|
+        self.instancias[__method__].send(__method__, una_instancia, *args)
     end
 
     self.singleton_class.send(:define_method, metodo, &bloque_origen)
 
     bloque_fuente = proc do
     |*args|
-      self.origen.send(__method__, *args)
+      self.origen.send(__method__, self, *args)
     end
 
     self.target.send(:define_method, metodo, &bloque_fuente)

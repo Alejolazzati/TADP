@@ -99,6 +99,7 @@ describe 'Tests sobre las transformaciones de inyeccion de logica' do
     Aspect.on MiClase do
       transform(where name(/m1/)) do
         before do |*args|
+          @x = 10
           new_args = args.map{|arg| arg * 10}
           new_args
         end
@@ -107,6 +108,7 @@ describe 'Tests sobre las transformaciones de inyeccion de logica' do
 
     instancia = MiClase.new
     expect(instancia.m1(1,2)).to eq(30)
+    expect(instancia.x).to eq(10)
   end
 
   it 'Transformacion after' do
@@ -132,6 +134,56 @@ describe 'Tests sobre las transformaciones de inyeccion de logica' do
 
     instancia = MiClase.new
     expect(instancia.m2(10)).to eq(10)
+    expect(instancia.m2(200)).to eq(400)
+  end
+
+  it 'Transformacion instead_of' do
+    class MiClase
+      attr_accessor :x
+
+      def m3(x)
+        @x = x
+      end
+    end
+
+    Aspect.on MiClase do
+      transform(where name(/m3/)) do
+        instead_of do |*args|
+          @x = 123
+        end
+      end
+    end
+
+    instancia = MiClase.new
+    instancia.m3(10)
+    expect(instancia.x).to eq(123)
+  end
+
+end
+
+describe 'Test integrador' do
+
+  it 'Test inject y redirect' do
+    class A
+      def saludar(x)
+        "Hola, " + x
+      end
+    end
+
+    class B
+      def saludar(x)
+        "Adiosin, " + x
+      end
+    end
+
+    Aspect.on B do
+      transform(where name(/saludar/)) do
+        inject(x: "Tarola")
+        redirect_to(A.new)
+        end
+    end
+
+    expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
 
 end
