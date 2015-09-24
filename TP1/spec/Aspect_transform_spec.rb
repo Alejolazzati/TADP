@@ -161,7 +161,7 @@ describe 'Tests sobre las transformaciones de inyeccion de logica' do
 
 end
 
-describe 'Test integrador' do
+describe 'Tests integradores' do
 
   it 'Test inject y redirect' do
     class A
@@ -184,6 +184,35 @@ describe 'Test integrador' do
     end
 
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
+  end
+
+  it 'Test operacion compleja' do
+    class Suma
+      def operar a,b,c
+        a+b+c
+      end
+    end
+
+    class Producto
+      def operar a,b,c
+        a*b*c
+      end
+    end
+
+    Aspect.on Suma do
+      transform(where name(/operar/)) do
+        inject(a: 10)
+        before do
+          |*args|
+          args[1] = 10
+          args[2] = 10
+          args
+        end
+        redirect_to(Producto.new)
+      end
+    end
+
+    expect(Suma.new.operar(1,1,1)).to eq(1000)
   end
 
 end

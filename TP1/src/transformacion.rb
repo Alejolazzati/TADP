@@ -64,7 +64,12 @@ def before(&logica)
   comportamiento = proc do
   |una_instancia, *args|
     resultado = una_instancia.instance_exec(*args, &self.logica)
-    self.origen_padre.metodos[__method__].bind(una_instancia).call(*resultado)
+
+    if self.fuente != nil
+      self.fuente.send(__method__, una_instancia, *resultado)
+    else
+      self.origen_padre.metodos[__method__].bind(una_instancia).call(*resultado)
+    end
   end
 
   nuevo_origen.singleton_class.send(:define_method, self.metodo.name, &comportamiento)
