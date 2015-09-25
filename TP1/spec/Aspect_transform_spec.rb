@@ -95,21 +95,38 @@ describe 'Tests de la transformacion inject sobre el metodo sumar de la clase Su
       end
     end
 
-    instancia = Suma.new
+    class Suma2
+
+    end
+
+    module Modulo
+      def sumar a,b
+        a+b
+      end
+    end
+
+    class Suma3
+      include Modulo
+    end
+
+    instancia_suma = Suma2.new
     bloque = proc do
     |a,b|
       a+b
     end
-    instancia.define_singleton_method(:sumar, &bloque)
+    instancia_suma.define_singleton_method(:sumar, &bloque)
 
-    Aspect.on Suma, Modulo, instancia do
+    Aspect.on  Suma, Modulo, instancia_suma do
       transform(where has_parameters(1, /b/)) do
         inject(b: proc {|receptor, mensaje, arg_anterior| "bar(#{mensaje}->#{arg_anterior})"})
       end
     end
 
+    instancia_modulo = Suma3.new
+
     expect(Suma.new.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
-    expect(instancia.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
+    expect(instancia_suma.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
+    expect(instancia_modulo.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
   end
 end
 
