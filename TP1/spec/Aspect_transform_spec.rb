@@ -29,7 +29,7 @@ describe 'Test de condiciones concretas' do
       redirect_to(B.new)
     end
     }
-    expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
+DP    expect(A.new.saludar("Mundo")).to be_identical_string("Adiosin, Mundo")
 
   end
 
