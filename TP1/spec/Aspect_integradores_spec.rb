@@ -13,6 +13,12 @@ describe 'Test de transformaciones "integradoras"' do
       end
     end
 
+    class Suma
+      def sumar(a,b)
+        a + b
+      end
+    end
+
     class B
       def saludar(x)
         "Adiosin, " + x
@@ -147,5 +153,18 @@ describe 'Test de transformaciones "integradoras"' do
     end
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
+
+ it 'inject con 2 parametros' do
+  Aspect.on Suma do
+    transform(where has_parameters(1, /b/)) do
+      inject(a: 100,b: 50)
+      #inject(a: 100)
+    end
+  end
+
+  expect(Suma.new.sumar(1,2)).to eq(150)
+  expect(Suma.new.sumar(100,100)).to eq(150)
+  expect(Suma.new.sumar(2,1)).to eq(150)
+end
 
 end
