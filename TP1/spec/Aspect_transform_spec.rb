@@ -256,11 +256,10 @@ describe 'Tests integradores' do
 
     Aspect.on Suma do
       transform(where name(/operar/)) do
-        inject(a: 10, b: 12, c: 3)
+        inject(a: 10, b: 12, c: 10)
         before do
           |*args|
           args[1] = 10
-          args[2] = 10
           args
         end
         before do
