@@ -8,34 +8,22 @@ class Aspect
       origen = Origen.new()
       origen.fuente = fuente
 
-=begin
-      if fuente.instance_of? Module
-        instancia = God.include(Module).new
-      else if fuente.instance_of? Class
-             instancia = fuente.new
-           else
-             instancia = fuente.clone
-             origen.target = fuente.singleton_class
-           end
-      end
-=end
       origen.target.singleton_class.send(:attr_accessor, :origen)
       origen.target.origen = origen
 
       comportamiento = proc do
-        if self.class.methods.include? :origen
-          self.class.origen
-        else
-          self.origen
+
+        ancestros = self.class.ancestors.select{|un_padre| un_padre.respond_to? :origen}
+        ancestros << self.singleton_class
+
+        ancestros.flatten.first.send(:origen)
+
         end
-      end
 
       origen.target.send(:define_method, :origen, &comportamiento)
 
       origen.instance_eval &bloque
-
     end
-
   end
 
   def self.regexp_to_origins(regexp)
@@ -55,20 +43,3 @@ end
 
 class God
 end
-=begin
-class Ejecutador
-  attr_accessor :metodo, :fuente
-
-  def initialize(metodo, fuente)
-    self.metodo = metodo
-    self.fuente = fuente
-  end
-
-  def method_missing(sym, *args)
-    if sym == self.metodo.name
-      instancia = (self.fuente.instance_of? Class or self.fuente.instance_of? Module) ? fuente.new : fuente
-      self.metodo.bind(instancia).call(*args)
-    end
-  end
-end
-=end

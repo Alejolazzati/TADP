@@ -11,32 +11,81 @@ describe 'Tests de la transformacion inject sobre el metodo sumar de la clase Su
       end
     end
 
-    Aspect.on Suma do
+    module Modulo
+      def sumar a,b
+        a+b
+      end
+    end
+
+    class Suma2
+      include(Modulo)
+    end
+
+    instancia = Suma.new
+    bloque = proc do
+    |a,b|
+      a+b
+    end
+    instancia.define_singleton_method(:sumar, &bloque)
+
+    Aspect.on Suma, Modulo, instancia do
       transform(where has_parameters(1, /b/)) do
         inject(b: 100)
       end
     end
 
+    instancia2 = Suma2.new
+
     expect(Suma.new.sumar(1,2)).to eq(101)
+    expect(instancia.sumar(1,2)).to eq(101)
+    expect(instancia2.sumar(1,2)).to eq(101)
   end
 
   it 'Al inyectar 100 al primer parametro del metodo sum y 50 al segundo, la cuenta deberia dar 150 independientemente de los parametros reales' do
+
     class Suma
       def sumar a,b
         a+b
       end
     end
 
-    Aspect.on Suma do
+    module Modulo
+      def sumar a,b
+        a+b
+      end
+    end
+
+    class Suma2
+      include(Modulo)
+    end
+
+    instancia = Suma.new
+    bloque = proc do
+    |a,b|
+      a+b
+    end
+    instancia.define_singleton_method(:sumar, &bloque)
+
+    Aspect.on Suma, Suma2, instancia do
       transform(where has_parameters(1, /b/)) do
         inject(b: 50)
         inject(a: 100)
       end
     end
 
+    instancia2 = Suma2.new
+
     expect(Suma.new.sumar(1,2)).to eq(150)
     expect(Suma.new.sumar(100,100)).to eq(150)
     expect(Suma.new.sumar(2,1)).to eq(150)
+
+    expect(instancia.sumar(1,2)).to eq(150)
+    expect(instancia.sumar(100,100)).to eq(150)
+    expect(instancia.sumar(2,1)).to eq(150)
+
+    expect(instancia2.sumar(1,2)).to eq(150)
+    expect(instancia2.sumar(100,100)).to eq(150)
+    expect(instancia2.sumar(2,1)).to eq(150)
   end
 
   it 'Al inyectarle un proc al segundo parametro, concatena el primero al resultado del proc: foo con bar(sumar->foo)' do
@@ -47,14 +96,21 @@ describe 'Tests de la transformacion inject sobre el metodo sumar de la clase Su
       end
     end
 
+    instancia = Suma.new
+    bloque = proc do
+    |a,b|
+      a+b
+    end
+    instancia.define_singleton_method(:sumar, &bloque)
 
-    Aspect.on Suma do
+    Aspect.on Suma, Modulo, instancia do
       transform(where has_parameters(1, /b/)) do
         inject(b: proc {|receptor, mensaje, arg_anterior| "bar(#{mensaje}->#{arg_anterior})"})
       end
     end
 
     expect(Suma.new.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
+    expect(instancia.sumar('foo', 'foo')).to eq("foobar(sumar->foo)")
   end
 end
 
@@ -186,7 +242,7 @@ describe 'Tests integradores' do
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
 
-  it 'Test operacion compleja' do
+  it 'Test operacion compleja 1' do
     class Suma
       def operar a,b,c
         a+b+c
@@ -208,11 +264,56 @@ describe 'Tests integradores' do
           args[2] = 10
           args
         end
+        before do
+        |*args|
+          args[1] *= 10
+          args
+        end
         redirect_to(Producto.new)
       end
     end
 
-    expect(Suma.new.operar(1,1,1)).to eq(1000)
+    expect(Suma.new.operar(1,1,1)).to eq(10000)
+  end
+
+
+  it 'Test operacion compleja 2' do
+    class Suma
+      def operar a,b,c
+        a+b+c
+      end
+    end
+
+    class Producto
+      def operar a,b,c
+        a*b*c
+      end
+    end
+
+    Aspect.on Suma do
+      transform(where name(/operar/)) do
+        inject(a: 10)
+        before do
+        |*args|
+          args[1] = 10
+          args[2] = 10
+          args
+        end
+        before do
+        |*args|
+          args[1] *= 10
+          args
+        end
+
+        instead_of do |*args|
+          123
+        end
+
+        redirect_to(Producto.new)
+      end
+    end
+
+    expect(Suma.new.operar(1,1,1)).to eq(123)
   end
 
 end
