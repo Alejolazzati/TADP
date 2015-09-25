@@ -68,8 +68,7 @@ describe 'Tests de la transformacion inject sobre el metodo sumar de la clase Su
 
     Aspect.on Suma, Suma2, instancia do
       transform(where has_parameters(1, /b/)) do
-        inject(b: 50)
-        inject(a: 100)
+        inject(b: 50, a:100)
       end
     end
 
@@ -257,7 +256,7 @@ describe 'Tests integradores' do
 
     Aspect.on Suma do
       transform(where name(/operar/)) do
-        inject(a: 10)
+        inject(a: 10, b: 12, c: 3)
         before do
           |*args|
           args[1] = 10

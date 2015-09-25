@@ -4,7 +4,7 @@ module Transformacion
 
     nuevo_origen = Origen.new()
     nuevo_origen.origen_padre = self
-    nuevo_origen.hashes = hashes
+    nuevo_origen.hashes = hashes.first
 
     bloque = proc do
       |una_instancia, *args|
@@ -14,8 +14,9 @@ module Transformacion
       self.hashes.each do
         |hash|
 
-        clave = hash.keys.first
-        valor = hash.values.first
+        clave = hash.first
+        valor = hash.last
+
         pos = parametros.index clave
 
         args[pos] = if valor.is_a? Proc
