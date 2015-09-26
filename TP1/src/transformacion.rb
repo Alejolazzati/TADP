@@ -22,20 +22,15 @@ class Transformacion
   end
 
   def instead_of(&nuevo_metodo)
-    @metodo = before do |instance, cont, *args|
-      instance_exec(instance, *args, &nuevo_metodo)
-    end
+    @metodo = proc {|*args|instance_exec(self, *args, &nuevo_metodo)}
   end
 
   def after(&after)
     metodo = @metodo
-    @metodo =before do |instance, cont, *args|
+    @metodo =proc {|*args|
       metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind(self) : metodo
       instance_exec(*args, &metodo1)
-      instance_exec(self, *args, &after)
-#      cont.call(instance, metodo, *args)
-#      instance_exec(instance, *args, &after)
-    end
+      instance_exec(self, *args, &after)}
   end
 
 =begin
