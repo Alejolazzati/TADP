@@ -11,9 +11,9 @@ class Transformacion
 
     metodo = @metodo
     real_method = @real_method
-    after = @after
-    before = @before
-    inject = @inject
+ #   after = @after
+  #  before = @before
+ #   inject = @inject
     @target.send(:define_method, real_method.name) do
     |*parametros|
 
@@ -25,12 +25,13 @@ class Transformacion
       end
 =end
 
-      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
-      : instance_exec(*parametros, &before)
+      instance_exec(*parametros, &metodo)
+#      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
+#        : instance_exec(*parametros, &before)
 
-      resultado =after.nil? ? sin_after : instance_exec(*parametros, &after)
+#      resultado =after.nil? ? sin_after : instance_exec(*parametros, &after)
   #    metodo = metodo.unbind if metodo.is_a?(Method) #para que no tenga efecto de lado haciendolo varias veces
-      resultado
+ #     resultado
     end
 
   end
@@ -49,7 +50,7 @@ class Transformacion
   end
 
   def after(&after)
-    @after =before do |instance, cont, *args|
+    @metodo =before do |instance, cont, *args|
       cont.call(instance, nil, *args)
       instance_exec(instance, *args, &after)
     end
@@ -57,7 +58,7 @@ class Transformacion
 
   def before(&before)
     metodo = @metodo
-    @before = proc { |*parametros|
+    @metodo = proc { |*parametros|
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
       continuacion = proc { |_, _, *new_parameters| metodo.call(*new_parameters) }
       instance_exec(self, continuacion, *parametros, &before) }
