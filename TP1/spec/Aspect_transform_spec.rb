@@ -108,7 +108,7 @@ describe 'Test de transformaciones concretas' do
 =begin
 =end
 
-  context 'redirect' do
+  context 'redirect'
     it 'redireccionar saludo' do
       Aspect.on A do
         transform(where name(/saludar/)) do
