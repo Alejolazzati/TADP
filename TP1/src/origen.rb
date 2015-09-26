@@ -22,16 +22,16 @@ class Origen
   end
   def transform(metodos_filtrados, &bloque)
     target.send(:__cont__=,100)
-   @metodos=metodos_filtrados
+
     self.hashMetodos={}
 
-    metodos.each do |metodo|
+    metodos_filtrados.each do |metodo|
      target.send(:alias_method,('old'+metodo.to_s).to_sym,metodo)
      self.hashMetodos[metodo]=Array.new
-      self.hashMetodos[metodo].push self.agregarContinuacion(&proc {|*args|
+      self.hashMetodos[metodo].push &proc {|instance,cont,*args|
 
-        self.send(('old'+metodo.to_s).to_sym,*args)
-                                                        })
+        instance.send(('old'+metodo.to_s).to_sym,*args)
+                                                        }
 
     end
     bloque.call()
@@ -40,12 +40,13 @@ class Origen
    target.send(:define_method,:__hashMetodos__,proc do
                              hashM
                              end)
+
    metodos.each do |metodo|
 
 
    target.send(:define_method,metodo,proc {
                 |*args|
-                ( __hashMetodos__[metodo].inject(proc{}){|cont,proc| proc.curry.(self).(cont)}).call(self,*args)
+                               ( __hashMetodos__[metodo].inject(proc{}){|cont,proc| proc.curry.(self).(cont)}).call(self,*args)
                              })
    end
 
