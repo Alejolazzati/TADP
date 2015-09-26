@@ -109,6 +109,7 @@ describe 'Test de transformaciones "integradoras"' do
   end
 
 
+
   it 'instead of' do
     Aspect.on MiClase do
       transform(where name(/m3/)) do
@@ -219,19 +220,19 @@ describe 'Test de transformaciones "integradoras"' do
 
   it 'deberia aplicar el inject y el after a ambos saludar y despedir' do
     Aspect.on A4, /.*4/ do
-      transform(where has_parameters(1, /p_saludar/)) do
-        inject(p_saludar: "Roberto")
-        after do |instance, *args|
-          "Dios dice: hola " + args[0] + "!"
-        end
-      end
-
       transform(where has_parameters(1, /p_despedir/)) do
-        inject(p_despedir: "Roberto")
         after do |instance, *args|
           "Dios dice: chau " + args[0] + "!"
         end
+        inject(p_despedir: "Roberto")
       end
+      transform(where has_parameters(1, /p_saludar/)) do
+        after do |instance, *args|
+          "Dios dice: hola " + args[0] + "!"
+        end
+        inject(p_saludar: "Roberto")
+      end
+
     end
 
     expect(A4.new.despedir "Jose").to eq("Dios dice: chau Roberto!")

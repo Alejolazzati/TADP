@@ -63,13 +63,16 @@ class Transformacion
     parametros = @real_method.parameters.map { |_, sym| sym }
     new_args= hasht.map { |key, value| [get_index(parametros, key), value] }
     method_name = @real_method.name
+    method=  @metodo
     before do |instance, cont, *args|
+      metodo1 =  method.is_a?(UnboundMethod) ? method.bind(self) : method
 
       new_args.each do |index, value|
         old_value = args[index]
         args[index] = value.is_a?(Proc) ? value.call(self, method_name, old_value) : value
       end
-      cont.call(self, nil, *args)
+      instance_exec(*args, &metodo1)
+#      cont.call(self, method, *args)
     end
   end
 
