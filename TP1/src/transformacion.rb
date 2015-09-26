@@ -26,20 +26,16 @@ class Transformacion
   end
 
   def after(&after)
-    metodo = @metodo
-    current_transform = self
+    metodo= wrapped_method
     @metodo =proc { |*args|
-      metodo1 = current_transform.bindear(self,metodo)
-      instance_exec(*args, &metodo1)
+      instance_exec(*args, &metodo.call(self))
       instance_exec(self, *args, &after) }
   end
 
   def before(&before)
-    metodo = @metodo
-    current_transform = self
+    metodo= wrapped_method
     @metodo = proc { |*parametros|
-      metodo1 = current_transform.bindear(self,metodo)
-      continuacion = proc { |instancia, cont, *new_parameters| instance_exec(*new_parameters, &metodo1) } #REVISAR
+      continuacion = proc { |instancia, cont, *new_parameters| instance_exec(*new_parameters, &metodo.call(self)) } #REVISAR
       instance_exec(self, continuacion, *parametros, &before) }
   end
 
@@ -47,16 +43,19 @@ class Transformacion
     parametros = @real_method.parameters.map { |_, sym| sym }
     new_args= hasht.map { |key, value| [get_index(parametros, key), value] }
     method_name = @real_method.name
-    metodo= @metodo
-    current_transform = self
+    metodo= wrapped_method
     @metodo = proc { |*args|
-      metodo1 = current_transform.bindear(self,metodo)
       new_args.each do |index, value|
         old_value = args[index]
         args[index] = value.is_a?(Proc) ? value.call(self, method_name, old_value) : value
       end
-      instance_exec(*args, &metodo1)
+      instance_exec(*args, &metodo.call(self))
     }
+  end
+
+  def wrapped_method
+    metodo = @metodo
+    proc {|fuente| bindear(fuente,metodo)}
   end
 
   def get_index(parameters, key)
