@@ -18,7 +18,12 @@ class Transformacion
     |*parametros|
 
       metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-      inject.each { |index, value| parametros[index]= value }
+      inject.each do |index, value|
+        old_value = parametros[index]
+        parametros[index] = value.is_a?(Proc) ? value.call(self, real_method.name, old_value) : value
+      end
+
+
 
       sin_after = before.nil? ? instance_exec(*parametros, &metodo)
       : instance_exec(*parametros, &before)
@@ -58,7 +63,7 @@ class Transformacion
     p "parametros"
     p parametros
     method_name = @real_method.name
-    @inject = hasht.map { |key, value| [get_index(parametros,key), get_value(value,p,method_name)] }
+    @inject = hasht.map { |key, value| [i = get_index(parametros,key), value] }
   end
 
   def get_index(parameters,key)

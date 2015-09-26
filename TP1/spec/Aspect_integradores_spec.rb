@@ -144,7 +144,7 @@ describe 'Test de transformaciones "integradoras"' do
     expect(instancia.hace_otra_cosa("foo", "foo")).to eq("bar:foo")
   end
 
-  it 'should BOOM raising NoParameterException' do
+  it 'Lanza excepcion cuando se le pasa un parametro que no existe' do
     expect {
       Aspect.on MiClase do
         transform(where name(/m2/)) do
@@ -154,6 +154,23 @@ describe 'Test de transformaciones "integradoras"' do
     }.to raise_error(ArgumentError, 'Ese parametro no existe PAPA!')
   end
 
+  it 'inject con proc basico' do
+    Aspect.on MiClase do
+      transform(where name(/m3/)) do
+        inject(x: proc { |receptor, mensaje, arg_anterior| 5 })
+      end
+    end
+    expect(instancia.m3(15)).to eq(5)
+  end
+
+  it 'inject con proc basico con parametro anterior' do
+    Aspect.on MiClase do
+      transform(where name(/m3/)) do
+        inject(x: proc { |receptor, mensaje, arg_anterior| 5 +  p(arg_anterior)})
+      end
+    end
+    expect(instancia.m3(15)).to eq(20)
+  end
 
   it 'transformacion compuesta del enunciado' do
     Aspect.on B do
