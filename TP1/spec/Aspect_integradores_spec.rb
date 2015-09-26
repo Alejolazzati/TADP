@@ -254,5 +254,21 @@ describe 'Test de transformaciones "integradoras"' do
     expect(MiClase.new.m5 5).to eq(20)
   end
 
+  it 'doble redirect test' do
+    Aspect.on A do
+      transform(where name(/saludar/)) do
+        redirect_to(B.new)
+      end
+    end
+
+    Aspect.on B do
+      transform(where name(/saludar/)) do
+        redirect_to(A.new)
+      end
+    end
+
+    expect{A.new.saludar("Mundo")}.to raise_exception(SystemStackError)
+  end
+
 end
 
