@@ -12,7 +12,7 @@ class Transformacion
     real_method = @real_method
     @target.send(:define_method, real_method.name) do
     |*parametros|
-      metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind : metodo
+     metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind(self) : metodo
       instance_exec(*parametros, &metodo1)
     end
   end
@@ -41,11 +41,9 @@ class Transformacion
   def before(&before)
     metodo = @metodo
     @metodo = proc { |*parametros|
-#     metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind : metodo
- #     metodo = metodo.unbind if metodo.is_a?(Method)
-     metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
+     metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind(self) : metodo
 
-      continuacion = proc { |instancia, cont, *new_parameters| metodo.call(*new_parameters) } #REVISAR
+      continuacion = proc { |instancia, cont, *new_parameters| metodo1.call(*new_parameters) } #REVISAR
       instance_exec(self, continuacion, *parametros, &before) }
   end
 

@@ -125,7 +125,7 @@ describe 'Test de transformaciones concretas' do
     optimus = Transformacion.new(B, :saludar)
     optimus.instance_eval { transformate { inject(x: "Tarola"); redirect_to(A.new) } }
 
-    expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
+    expect(B.new.saludar("Mundo")).to eq("Hola, Mundo")
   end
 
 end
