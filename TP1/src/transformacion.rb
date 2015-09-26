@@ -27,16 +27,18 @@ class Transformacion
 
   def after(&after)
     metodo = @metodo
+    current_transform = self
     @metodo =proc { |*args|
-      metodo1 = metodo.is_a?(UnboundMethod) ? metodo.bind(self) : metodo
+      metodo1 = current_transform.bindear(self,metodo)
       instance_exec(*args, &metodo1)
       instance_exec(self, *args, &after) }
   end
 
   def before(&before)
     metodo = @metodo
+    current_transform = self
     @metodo = proc { |*parametros|
-      metodo1 = metodo.is_a?(UnboundMethod) ? metodo.bind(self) : metodo
+      metodo1 = current_transform.bindear(self,metodo)
       continuacion = proc { |instancia, cont, *new_parameters| instance_exec(*new_parameters, &metodo1) } #REVISAR
       instance_exec(self, continuacion, *parametros, &before) }
   end
@@ -45,24 +47,28 @@ class Transformacion
     parametros = @real_method.parameters.map { |_, sym| sym }
     new_args= hasht.map { |key, value| [get_index(parametros, key), value] }
     method_name = @real_method.name
-    method= @metodo
-    @metodo =  proc {|*args|
-        metodo1 = method.is_a?(UnboundMethod) ? method.bind(self) : method
-        new_args.each do |index, value|
-          old_value = args[index]
-          args[index] = value.is_a?(Proc) ? value.call(self, method_name, old_value) : value
-        end
-        instance_exec(*args, &metodo1)
-      }
-    end
-
-    def get_index(parameters, key)
-      index = parameters.find_index { |parameter| parameter == key }
-      index.nil? ? (raise ArgumentError.new 'Ese parametro no existe PAPA!') : index
-    end
-
-    def get_value(value, original_parameter, method_name)
-      value.is_a?(Proc) ? value.call(self, method_name, original_parameter) : value
-    end
-
+    metodo= @metodo
+    current_transform = self
+    @metodo = proc { |*args|
+      metodo1 = current_transform.bindear(self,metodo)
+      new_args.each do |index, value|
+        old_value = args[index]
+        args[index] = value.is_a?(Proc) ? value.call(self, method_name, old_value) : value
+      end
+      instance_exec(*args, &metodo1)
+    }
   end
+
+  def get_index(parameters, key)
+    index = parameters.find_index { |parameter| parameter == key }
+    index.nil? ? (raise ArgumentError.new 'Ese parametro no existe PAPA!') : index
+  end
+
+  def get_value(value, original_parameter, method_name)
+    value.is_a?(Proc) ? value.call(self, method_name, original_parameter) : value
+  end
+
+  def bindear(fuente,method)
+    method.is_a?(UnboundMethod) ? method.bind(fuente) : method
+  end
+end
