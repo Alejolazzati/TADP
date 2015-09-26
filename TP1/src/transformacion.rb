@@ -18,9 +18,7 @@ class Transformacion
 
   def redirect_to(objetivo)
     real_method = @real_method.name
-    @metodo = before do |instance, cont, *args|
-      objetivo.send(real_method, *args)
-    end
+    @metodo = proc {|*args|objetivo.send(real_method, *args)}
   end
 
   def instead_of(&nuevo_metodo)
