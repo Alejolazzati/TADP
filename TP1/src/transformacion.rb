@@ -42,7 +42,9 @@ class Transformacion
   end
 
   def instead_of(&nuevo_metodo)
-    @metodo = proc { |*parametros| instance_exec(self, *parametros, &nuevo_metodo) }
+    @metodo = before do |instance, cont, *args|
+      instance_exec(instance, *args, &nuevo_metodo)
+    end
   end
 
   def after(&after)
