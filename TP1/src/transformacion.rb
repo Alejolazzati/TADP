@@ -11,14 +11,15 @@ class Transformacion
 
     metodo = @metodo
     real_method = @real_method
- #   after = @after
-  #  before = @before
- #   inject = @inject
+    #   after = @after
+    #  before = @before
+    #   inject = @inject
     @target.send(:define_method, real_method.name) do
     |*parametros|
+      #     metodo = metodo.unbind if metodo.is_a?(Method)
+      #    metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
+    #  metodo1 =  metodo.is_a?(UnboundMethod) ? method.bind : metodo
 
-      metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-  #    metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
 =begin
       inject.each do |index, value|
         old_value = parametros[index]
@@ -27,19 +28,19 @@ class Transformacion
 =end
 
       instance_exec(*parametros, &metodo)
-#      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
-#        : instance_exec(*parametros, &before)
+      #      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
+      #        : instance_exec(*parametros, &before)
 
-#      resultado =after.nil? ? sin_after : instance_exec(*parametros, &after)
-  #    metodo = metodo.unbind if metodo.is_a?(Method) #para que no tenga efecto de lado haciendolo varias veces
- #     resultado
+      #      resultado =after.nil? ? sin_after : instance_exec(*parametros, &after)
+      #    metodo = metodo.unbind if metodo.is_a?(Method) #para que no tenga efecto de lado haciendolo varias veces
+      #     resultado
     end
 
   end
 
   def redirect_to(objetivo)
     real_method = @real_method.name
-    @metodo =  before do |instance, cont, *args|
+    @metodo = before do |instance, cont, *args|
       objetivo.send(real_method, *args)
     end
   end
@@ -51,8 +52,9 @@ class Transformacion
   end
 
   def after(&after)
+    metodo = @metodo
     @metodo =before do |instance, cont, *args|
-      cont.call(instance, nil, *args)
+      cont.call(instance, metodo, *args)
       instance_exec(instance, *args, &after)
     end
   end
@@ -60,10 +62,14 @@ class Transformacion
   def before(&before)
     metodo = @metodo
     @metodo = proc { |*parametros|
-      metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-      continuacion = proc { |_, _, *new_parameters| metodo.call(*new_parameters) }
+
+ #     metodo = metodo.unbind if metodo.is_a?(Method)
+     metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
+#      metodo1 =  metodo.is_a?(UnboundMethod) ? method.bind : metodo
+      continuacion = proc { |instancia, cont, *new_parameters| metodo.call(*new_parameters) } #REVISAR
       instance_exec(self, continuacion, *parametros, &before) }
   end
+
 =begin
   before do |instance, cont, *args|
     @x = 10
@@ -76,8 +82,8 @@ class Transformacion
 #    @inject = hasht.map { |key, value| [get_index(parametros,key), value] }
 #    metodo = @metodo
     parametros = @real_method.parameters.map { |_, sym| sym }
-    new_args= hasht.map { |key, value| [get_index(parametros,key), value] }
-    method_name  = @real_method.name
+    new_args= hasht.map { |key, value| [get_index(parametros, key), value] }
+    method_name = @real_method.name
     before do |instance, cont, *args|
 
       new_args.each do |index, value|
@@ -88,12 +94,12 @@ class Transformacion
     end
   end
 
-  def get_index(parameters,key)
-    index = parameters.find_index { |parameter|parameter == key }
+  def get_index(parameters, key)
+    index = parameters.find_index { |parameter| parameter == key }
     index.nil? ? (raise ArgumentError.new 'Ese parametro no existe PAPA!') : index
   end
 
-  def get_value(value,original_parameter,method_name)
+  def get_value(value, original_parameter, method_name)
     value.is_a?(Proc) ? value.call(self, method_name, original_parameter) : value
   end
 

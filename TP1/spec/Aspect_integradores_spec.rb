@@ -189,7 +189,7 @@ describe 'Test de transformaciones "integradoras"' do
   it 'inject con proc basico con parametro anterior' do
     Aspect.on MiClase do
       transform(where name(/m3/)) do
-        inject(x: proc { |receptor, mensaje, arg_anterior| 5 +  arg_anterior})
+        inject(x: proc { |receptor, mensaje, arg_anterior| 5 + arg_anterior })
       end
     end
     expect(instancia.m3(15)).to eq(20)
@@ -202,12 +202,12 @@ describe 'Test de transformaciones "integradoras"' do
         redirect_to(A.new)
       end
     end
-    expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
+    expect(B.new.saludar("Mundo")).to eq("Hola, Mundo")
   end
 
   it 'inject con 2 parametros' do
     Aspect.on Suma do
-      transform(where name(/sumar/)) do#probar con has_parameters(1, /b/) TODO
+      transform(where name(/sumar/)) do #probar con has_parameters(1, /b/) TODO
         inject(a: 100, b: 50)
       end
     end
@@ -267,7 +267,7 @@ describe 'Test de transformaciones "integradoras"' do
       end
     end
 
-    expect{A.new.saludar("Mundo")}.to raise_exception(SystemStackError)
+    expect { A.new.saludar("Mundo") }.to raise_exception(SystemStackError)
   end
 
 end
