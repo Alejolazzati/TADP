@@ -18,7 +18,7 @@ class Transformacion
     |*parametros|
       #     metodo = metodo.unbind if metodo.is_a?(Method)
       #    metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-    #  metodo1 =  metodo.is_a?(UnboundMethod) ? method.bind : metodo
+      metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind : metodo
 
 =begin
       inject.each do |index, value|
@@ -27,7 +27,7 @@ class Transformacion
       end
 =end
 
-      instance_exec(*parametros, &metodo)
+      instance_exec(*parametros, &metodo1)
       #      sin_after = before.nil? ? instance_exec(*parametros, &metodo)
       #        : instance_exec(*parametros, &before)
 
@@ -65,7 +65,7 @@ class Transformacion
 
  #     metodo = metodo.unbind if metodo.is_a?(Method)
      metodo = metodo.bind(self) if metodo.is_a?(UnboundMethod)
-#      metodo1 =  metodo.is_a?(UnboundMethod) ? method.bind : metodo
+#     metodo1 =  metodo.is_a?(UnboundMethod) ? metodo.bind : metodo
       continuacion = proc { |instancia, cont, *new_parameters| metodo.call(*new_parameters) } #REVISAR
       instance_exec(self, continuacion, *parametros, &before) }
   end
@@ -78,9 +78,6 @@ class Transformacion
   end
 =end
   def inject(hasht)
-#    parametros = @real_method.parameters.map { |_, sym| sym }
-#    @inject = hasht.map { |key, value| [get_index(parametros,key), value] }
-#    metodo = @metodo
     parametros = @real_method.parameters.map { |_, sym| sym }
     new_args= hasht.map { |key, value| [get_index(parametros, key), value] }
     method_name = @real_method.name
