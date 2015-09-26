@@ -34,18 +34,6 @@ class Transformacion
     end
 
   end
-
-
-  def redirect_to(objetivo)
-    real_method = @real_method.name
-    @metodo = proc { |*parametros| objetivo.send(real_method, *parametros) }
-  end
-
-  def instead_of(&nuevo_metodo)
-    @metodo = before do |instance, cont, *args|
-      instance_exec(instance, *args, &nuevo_metodo)
-    end
-  end
 =begin
   before do |instance, cont, *args|
     @x = 10
@@ -53,6 +41,20 @@ class Transformacion
     cont.call(self, nil, *new_args)
   end
 =end
+
+  def redirect_to(objetivo)
+    real_method = @real_method.name
+    @metodo =  before do |instance, cont, *args|
+      objetivo.send(real_method, *args)
+    end
+  end
+
+  def instead_of(&nuevo_metodo)
+    @metodo = before do |instance, cont, *args|
+      instance_exec(instance, *args, &nuevo_metodo)
+    end
+  end
+
   def after(&after)
     @after =before do |instance, cont, *args|
       cont.call(instance, nil, *args)
