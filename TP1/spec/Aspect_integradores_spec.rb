@@ -32,6 +32,10 @@ describe 'Test de transformaciones "integradoras"' do
         x + y
       end
 
+      def m5 (x)
+        @x = @x + x
+      end
+
       def m2(x)
         @x = x
       end
@@ -234,5 +238,20 @@ describe 'Test de transformaciones "integradoras"' do
     expect(B4.new.saludar "Jose").to eq("Dios dice: hola Roberto!")
   end
 
+  it 'before y after compuestas' do
+    Aspect.on MiClase do
+      transform(where name(/m5/)) do
+        before do |instance, cont, *args|
+          @x = 10
+          cont.call(self, nil, *args)
+        end
+        after do |instance, *args|
+          @x = @x +5
+        end
+      end
+    end
+
+    expect(MiClase.new.m5 5).to eq(15)
+  end
 
 end
