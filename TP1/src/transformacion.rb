@@ -46,9 +46,18 @@ class Transformacion
       instance_exec(instance, *args, &nuevo_metodo)
     end
   end
-
+=begin
+  before do |instance, cont, *args|
+    @x = 10
+    new_args = args.map{ |arg| arg * 10 }
+    cont.call(self, nil, *new_args)
+  end
+=end
   def after(&after)
-    @after = proc { |*parametros| instance_exec(self, *parametros, &after) }
+    @after =before do |instance, cont, *args|
+      cont.call(instance, nil, *args)
+      instance_exec(instance, *args, &after)
+    end
   end
 
   def before(&before)
