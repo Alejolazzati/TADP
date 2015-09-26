@@ -53,8 +53,23 @@ class Transformacion
   end
 
   def inject(hasht)
+    p @real_method
     parametros = @real_method.parameters.map { |_, sym| sym }
-    @inject = hasht.map { |key, value| [parametros.find_index { |p| p == key }, value] }
+    p "parametros"
+    p parametros
+    method_name = @real_method.name
+    @inject = hasht.map { |key, value| [get_index(parametros,key), get_value(value,p,method_name)] }
+  end
+
+  def get_index(parameters,key)
+    p "key"
+    p key
+    index = parameters.find_index { |parameter|p "parameter" ;p(parameter) == key }
+    index.nil? ? (raise ArgumentError.new 'Ese parametro no existe PAPA!') : index
+  end
+
+  def get_value(value,original_parameter,method_name)
+    value.is_a?(Proc) ? value.call(self, method_name, original_parameter) : value
   end
 
 end

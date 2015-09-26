@@ -14,7 +14,7 @@ describe 'Test de transformaciones "integradoras"' do
     end
 
     class Suma
-      def sumar(a,b)
+      def sumar(a, b)
         a + b
       end
     end
@@ -144,6 +144,17 @@ describe 'Test de transformaciones "integradoras"' do
     expect(instancia.hace_otra_cosa("foo", "foo")).to eq("bar:foo")
   end
 
+  it 'should BOOM raising NoParameterException' do
+    expect {
+      Aspect.on MiClase do
+        transform(where name(/m2/)) do
+          inject(asdd: 42)
+        end
+      end
+    }.to raise_error(ArgumentError, 'Ese parametro no existe PAPA!')
+  end
+
+
   it 'transformacion compuesta del enunciado' do
     Aspect.on B do
       transform(where name(/saludar/)) do
@@ -154,17 +165,16 @@ describe 'Test de transformaciones "integradoras"' do
     expect(B.new.saludar("Mundo")).to eq("Hola, Tarola")
   end
 
- it 'inject con 2 parametros' do
-  Aspect.on Suma do
-    transform(where has_parameters(1, /b/)) do
-      inject(a: 100,b: 50)
-      #inject(a: 100)
+  it 'inject con 2 parametros' do
+    Aspect.on Suma do
+      transform(where has_parameters(1, /b/)) do
+        inject(a: 100, b: 50)
+      end
     end
-  end
 
-  expect(Suma.new.sumar(1,2)).to eq(150)
-  expect(Suma.new.sumar(100,100)).to eq(150)
-  expect(Suma.new.sumar(2,1)).to eq(150)
-end
+    expect(Suma.new.sumar(1, 2)).to eq(150)
+    expect(Suma.new.sumar(100, 100)).to eq(150)
+    expect(Suma.new.sumar(2, 1)).to eq(150)
+  end
 
 end
