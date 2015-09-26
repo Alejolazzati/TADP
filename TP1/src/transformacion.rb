@@ -48,7 +48,6 @@ class Transformacion
     method= @metodo
     @metodo =  proc {|*args|
         metodo1 = method.is_a?(UnboundMethod) ? method.bind(self) : method
-
         new_args.each do |index, value|
           old_value = args[index]
           args[index] = value.is_a?(Proc) ? value.call(self, method_name, old_value) : value
