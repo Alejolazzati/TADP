@@ -118,7 +118,6 @@ describe 'Test de transformaciones concretas' do
 
       expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
     end
-  end
 =begin
 =end
 

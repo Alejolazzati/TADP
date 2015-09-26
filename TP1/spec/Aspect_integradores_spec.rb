@@ -59,6 +59,25 @@ describe 'Test de transformaciones "integradoras"' do
         @sarasa
       end
     end
+    class A4
+      def saludar(p_saludar)
+        'A dice: hola ' + p_saludar + '!'
+      end
+
+      def despedir(p_despedir)
+        'A dice: chau ' + p_despedir + "!"
+      end
+    end
+
+    class B4
+      def saludar(p_saludar)
+        'B dice: hola ' + p_saludar + '!'
+      end
+
+      def despedir(p_despedir)
+        'B dice: chau ' + p_despedir + "!"
+      end
+    end
 
   end
   let (:instancia) do
@@ -166,7 +185,7 @@ describe 'Test de transformaciones "integradoras"' do
   it 'inject con proc basico con parametro anterior' do
     Aspect.on MiClase do
       transform(where name(/m3/)) do
-        inject(x: proc { |receptor, mensaje, arg_anterior| 5 +  p(arg_anterior)})
+        inject(x: proc { |receptor, mensaje, arg_anterior| 5 +  arg_anterior})
       end
     end
     expect(instancia.m3(15)).to eq(20)
@@ -193,5 +212,27 @@ describe 'Test de transformaciones "integradoras"' do
     expect(Suma.new.sumar(100, 100)).to eq(150)
     expect(Suma.new.sumar(2, 1)).to eq(150)
   end
+
+  it 'deberia aplicar el inject y el after a ambos saludar y despedir' do
+    Aspect.on A4, /.*4/ do
+      transform(where has_parameters(1, /p_saludar/)) do
+        inject(p_saludar: "Roberto")
+        after do |instance, *args|
+          "Dios dice: hola " + args[0] + "!"
+        end
+      end
+
+      transform(where has_parameters(1, /p_despedir/)) do
+        inject(p_despedir: "Roberto")
+        after do |instance, *args|
+          "Dios dice: chau " + args[0] + "!"
+        end
+      end
+    end
+
+    expect(A4.new.despedir "Jose").to eq("Dios dice: chau Roberto!")
+    expect(B4.new.saludar "Jose").to eq("Dios dice: hola Roberto!")
+  end
+
 
 end
