@@ -6,7 +6,7 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :metodos ,:fuente
+  attr_accessor :metodos ,:fuente,:hashMetodos
 
   def initialize(fuente)
     @fuente = fuente
@@ -23,8 +23,32 @@ class Origen
   def transform(metodos_filtrados, &bloque)
     target.send(:__cont__=,100)
    @metodos=metodos_filtrados
+    self.hashMetodos={}
 
+    metodos.each do |metodo|
+     target.send(:alias_method,('old'+metodo.to_s).to_sym,metodo)
+     self.hashMetodos[metodo]=Array.new
+      self.hashMetodos[metodo].push self.agregarContinuacion(&proc {|*args|
+
+        self.send(('old'+metodo.to_s).to_sym,*args)
+                                                        })
+
+    end
     bloque.call()
+
+    hashM=self.hashMetodos
+   target.send(:define_method,:__hashMetodos__,proc do
+                             hashM
+                             end)
+   metodos.each do |metodo|
+
+
+   target.send(:define_method,metodo,proc {
+                |*args|
+                ( __hashMetodos__[metodo].inject(proc{}){|cont,proc| proc.curry.(self).(cont)}).call(self,*args)
+                             })
+   end
+
   end
 
   def target
@@ -35,6 +59,12 @@ class Origen
     target.private_instance_methods + target.public_instance_methods
   end
 
+  def agregarContinuacion(&bloque)
+  proc do |instance, cont, *args|
+    instance.instance_exec(*args,&bloque)
+    cont.call(instance,*args)
 
+end
+    end
 end
 

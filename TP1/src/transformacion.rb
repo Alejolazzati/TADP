@@ -3,13 +3,13 @@ module Transformacion
   def before(&logic)
     self.metodos.each{|real_method|
 
-      target.send(:alias_method,:old,real_method)
+      #target.send(:alias_method,:old,real_method)
 
+    hashMetodos[real_method].push logic
 
+      #target.send(:define_method,real_method,proc{|*args|
 
-      target.send(:define_method,real_method,proc{|*args|
-
-                                      logic.call(self, self.method(:old),*args)})
+       #                               logic.call(self, self.method(:old),*args)})
     }
   end
 
