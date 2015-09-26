@@ -32,16 +32,16 @@ describe 'Test de transformaciones "integradoras"' do
         x + y
       end
 
-      def m5 (x)
-        @x = @x + x
-      end
-
       def m2(x)
         @x = x
       end
 
       def m3(x)
         @x = x
+      end
+
+      def m5 (x)
+        @x = x + @x
       end
 
       def hace_algo(p1, p2)
@@ -251,7 +251,7 @@ describe 'Test de transformaciones "integradoras"' do
       end
     end
 
-    expect(MiClase.new.m5 5).to eq(15)
+    expect(MiClase.new.m5 5).to eq(20)
   end
 
 end
