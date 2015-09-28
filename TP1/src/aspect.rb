@@ -1,12 +1,9 @@
 class Aspect
   attr_accessor :origenes
 
-  def self.on (*parametros,&bloque)
+  def self.on (*parametros)
     fuentes = select_origins(*parametros)
-    fuentes.each {|fuente| origen = Origen.new(fuente)#; yield(origen)
-      origen.instance_eval(&bloque)
-    }
-
+    fuentes.each {|fuente| origen = Origen.new(fuente); yield(origen)}
   end
 
   def self.regexp_to_origins(regexp)
@@ -21,9 +18,5 @@ class Aspect
     origins = parametros.flat_map {|posible_origen| (posible_origen.is_a?(Regexp)) ? (self.regexp_to_origins posible_origen) : [posible_origen]}
     origins.empty? ? (raise ArgumentError.new 'Origen vacio') : origins.uniq
   end
-
-end
-class Object
-  private
-  attr_accessor :__cont__
+  
 end

@@ -1,58 +1,33 @@
 module Transformacion
 
   def before(&logic)
-    self.metodos.each{|real_method|
 
-      #target.send(:alias_method,:old,real_method)
+    target.define_method(real_method,proc{|args|
+                                      logic.bind(target).call(target,alias_method,args)})
 
-    hashMetodos[real_method].push logic
-
-      #target.send(:define_method,real_method,proc{|*args|
-
-       #                               logic.call(self, self.method(:old),*args)})
-    }
   end
 
   def after(&logic)
 
-    self.metodos.each{|real_method|
-
-      target.send(:alias_method,('0ld'+(target.send(:__cont__).to_s)).to_sym,real_method)
-      target.send(:define_method,real_method,proc{|args|
-                               self.send(('0ld'+(self.class.send(:__cont__).to_s)).to_sym,args)
-                                logic.call(self,args)})
-    }
-    numero=(target.send(:__cont__))+1
-    target.send(:__cont__=,numero)
+  target.define_method(real_method,proc{|args| alias_method.bind(target).call(args)
+                                  logic.bind(target).call(target,args)})
   end
 
-end
-
   def instead_of(&logic)
-    self.metodos.each{|real_method|
-   target.send(:define_method,real_method,proc{|*args|
-                                  logic.call(self,*args)})
-    }
+    target.define_method(real_method,proc{|args|
+                                    logic.bind(target).call(target,args)})
   end
 
   def redirect_to(objetivo)
-    self.metodos.each{|real_method|
-    target.send(:define_method,real_method,proc {|*args| objetivo.send(real_method,*args)})
-    }
-    end
+    target.define_method(real_method,proc {|args| objetivo.send(self.real_method)})
+  end
 
   def inject(*hash)
-    self.metodos.each{|real_method|
-    nuevos_parametros = get_nuevos_parametros(hash,real_method);
-   target.send(:alias_method,real_method,alias_method)
-    target.send(:define_method,real_method,proc{
-                  target.send(alias_method,nuevos_parametros)
-                              })
-    }
-    end
+    proc {nuevos_parametros = get_nuevos_parametros(hash);self.fuente.send(self.real_method, *nuevos_parametros)}
+  end
 
-  def get_nuevos_parametros(*hash,unMetodo)
-    viejos_parametros = target.instance_method(unMetodo).parameters
+  def get_nuevos_parametros(*hash)
+    viejos_parametros = self.method(self.real_method).parameters
     hash.each {|hash|self.set_hash(hash,viejos_parametros) }
   end
 
@@ -64,4 +39,4 @@ end
   end
   #holita.method(:m).parameters .index(holita.method(:m).parameters.find { |l,sim| sim == :p2 })
 
-#end
+end

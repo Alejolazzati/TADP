@@ -6,12 +6,11 @@ class Origen
   include Condicion
   include Transformacion
 
-  attr_accessor :metodos ,:fuente,:hashMetodos
+
+  attr_accessor :fuente, :real_method, :metodo_alias
 
   def initialize(fuente)
     @fuente = fuente
-    @metodos=Array.new
-
   end
 
   def where(*condiciones)
@@ -20,35 +19,16 @@ class Origen
       condiciones.all? { |condicion| condicion.call(method) }
     end
   end
-  def transform(metodos_filtrados, &bloque)
-    target.send(:__cont__=,100)
 
-    self.hashMetodos={}
-
-    metodos_filtrados.each do |metodo|
-     target.send(:alias_method,('old'+metodo.to_s).to_sym,metodo)
-     self.hashMetodos[metodo]=Array.new
-      self.hashMetodos[metodo].push &proc {|instance,cont,*args|
-
-        instance.send(('old'+metodo.to_s).to_sym,*args)
-                                                        }
-
+  def transform(*metodos_filtrados, &bloque)
+    metodos_filtrados.each do
+      |metodo|
+      @real_method = metodo
+      target.send(:alias_method, :old_method, metodo) #quizas metodo.to_sym
+      @metodo_alias = :old_method
+      transformacion = proc {|method, logic_transformada| self.target.send(:define_method, method, logic_transformada)}#quizas haya que hacer fuente.target.send
+      transformacion.call(metodo,bloque)#quizas sin &
     end
-    bloque.call()
-
-    hashM=self.hashMetodos
-   target.send(:define_method,:__hashMetodos__,proc do
-                             hashM
-                             end)
-
-   metodos.each do |metodo|
-
-
-   target.send(:define_method,metodo,proc {
-                |*args|
-                               ( __hashMetodos__[metodo].inject(proc{}){|cont,proc| proc.curry.(self).(cont)}).call(self,*args)
-                             })
-   end
 
   end
 
@@ -65,7 +45,9 @@ class Origen
     instance.instance_exec(*args,&bloque)
     cont.call(instance,*args)
 
-end
-    end
-end
+  end
+
+  end
+  
+  end
 
