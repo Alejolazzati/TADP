@@ -27,7 +27,7 @@ class Origen
   end
 
   def target
-    (fuente.instance_of?(Class) || fuente.instance_of?(Module)) ? fuente : fuente.singleton_class#el fuente.instance_of?(Class) debería estar de mas pero si lo saco me joden los test
+    fuente.is_a?(Module) ? fuente : fuente.singleton_class
   end
 
   def all_methods
