@@ -20,17 +20,17 @@ describe 'Test de condiciones concretas' do
 
   it 'name con (/fo{2}/) ' do
     selector = origen.instance_eval { where name(/fo{2}/) }
-    expect(selector).to contain_exactly(:foo)
+    expect(selector).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'name con (/fo{2}/) ' do
     selector = origen.instance_eval { where name(/fo{2}/), name(/foo/) }
-    expect(selector).to contain_exactly(:foo)
+    expect(selector).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it ' metodo foo (foo matchea ambas regex)' do
     selector = origen.instance_eval { where name(/fo{2}/), name(/foo/) }
-    expect(selector).to contain_exactly(:foo)
+    expect(selector).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'ni bar ni foo matchean' do
@@ -46,7 +46,7 @@ describe 'Test de condiciones concretas' do
 
   it 'metodo privado y regex bar' do
     visibility =origen.instance_eval { where name(/bar/), is_private }
-    expect(visibility).to contain_exactly(:bar)
+    expect(visibility).to contain_exactly(MiClase.instance_method(:bar))
   end
 
   it 'bar no es publico' do
@@ -58,27 +58,27 @@ describe 'Test de condiciones concretas' do
 
    it 'foo tiene 3 parametros mandatory' do
     sarlompa = origen.instance_eval {where has_parameters(3, mandatory)}
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(sarlompa).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'foo es el unico con 6 parametros mandatory' do
     sarlompa =origen.instance_eval {where has_parameters(6)}
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(sarlompa).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'foo y bar tienen 3 parametros optional' do
     sarlompa =origen.instance_eval {where has_parameters(6)}
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(sarlompa).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'foo y bar tienen 4 parametros que matchean con la regex' do
     sarlompa =origen.instance_eval {where has_parameters(4, /p*/)}
-    expect(sarlompa).to contain_exactly(:bar)
+    expect(sarlompa).to contain_exactly(MiClase.instance_method(:bar))
   end
 
  it 'solo foo tienen 5 al menos parametros que matchean con la regex' do
     sarlompa =origen.instance_eval {where has_parameters(6, /p*/)}
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(sarlompa).to contain_exactly(MiClase.instance_method(:foo))
   end
 
   it 'nadie 7 al menos parametros que matchean con la regex' do

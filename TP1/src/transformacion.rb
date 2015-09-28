@@ -1,7 +1,7 @@
 class Transformacion
 
   def initialize(fuente, metodo_inicial)
-    @real_method = @metodo = fuente.instance_method(metodo_inicial)
+    @real_method = @metodo = metodo_inicial
     @target = fuente
     @inject = {}
   end

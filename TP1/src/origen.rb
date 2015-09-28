@@ -12,10 +12,11 @@ class Origen
   end
 
   def where(*condiciones)
-    all_methods.select do
+    metodos=all_methods.select do
       |method|
       condiciones.all? { |condicion| condicion.call(method) }
    end
+    metodos.map {|metodo| target.instance_method(metodo)}
   end
   def transform(metodos_filtrados, &bloque)
     metodos_filtrados.each do
@@ -24,6 +25,7 @@ class Origen
       Transformacion.new(target, metodo).transformate &bloque#haciendo esto para una misma transformacion estoy haciendo el mismo build una y otra vez
 
     end
+
   end
 
   def target

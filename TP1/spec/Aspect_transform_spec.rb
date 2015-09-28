@@ -45,13 +45,13 @@ describe 'Test de transformaciones concretas' do
   end
 
   it 'redireccionar basico' do
-    optimus = Transformacion.new(A, :saludar)
+    optimus = Transformacion.new(A, A.instance_method(:saludar))
     optimus.instance_eval { transformate { redirect_to(B.new) } }
     expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
   end
 
   it 'instead of' do
-    optimus = Transformacion.new(MiClase, :m3)
+    optimus = Transformacion.new(MiClase, MiClase.instance_method(:m3))
     optimus.instance_eval { transformate { instead_of do |instance, *args|
       @x = 123
     end } }
@@ -63,7 +63,7 @@ describe 'Test de transformaciones concretas' do
   end
 
   it 'after' do
-    optimus = Transformacion.new(MiClase, :m2)
+    optimus = Transformacion.new(MiClase, MiClase.instance_method(:m2))
     optimus.instance_eval { transformate { after do |instance, *args|
       if @x > 100
         2 * @x
@@ -79,7 +79,7 @@ describe 'Test de transformaciones concretas' do
   end
 
   it 'before' do
-    optimus = Transformacion.new(MiClase, :m1)
+    optimus = Transformacion.new(MiClase, MiClase.instance_method(:m1))
     optimus.instance_eval { transformate { before do |instance, cont, *args|
       @x = 10
       new_args = args.map { |arg| arg * 10 }
@@ -92,7 +92,7 @@ describe 'Test de transformaciones concretas' do
   end
 
   it 'inject' do
-    optimus = Transformacion.new(MiClase, :hace_algo)
+    optimus = Transformacion.new(MiClase, MiClase.instance_method(:hace_algo))
     optimus.instance_eval { transformate { inject(p2: 'bar') } }
     instancia = MiClase.new
 #    expect(instancia.hace_algo("foo")).to eq("foo-bar") deberia poder recibir un param menos?
@@ -100,7 +100,7 @@ describe 'Test de transformaciones concretas' do
   end
 
   it 'inject2' do
-    optimus = Transformacion.new(MiClase, :hace_otra_cosa)
+    optimus = Transformacion.new(MiClase, MiClase.instance_method(:hace_otra_cosa))
     optimus.instance_eval { transformate { inject(p2: 'bar') } }
     instancia = MiClase.new
     expect(instancia.hace_otra_cosa("foo", "foo")).to eq("bar:foo")
@@ -122,7 +122,7 @@ describe 'Test de transformaciones concretas' do
 =end
 
   it 'transformacion compuesta del enunciado' do
-    optimus = Transformacion.new(B, :saludar)
+    optimus = Transformacion.new(B, B.instance_method(:saludar))
     optimus.instance_eval { transformate { inject(x: "Tarola"); redirect_to(A.new) } }
 
     expect(B.new.saludar("Mundo")).to eq("Hola, Mundo")
