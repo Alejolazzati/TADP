@@ -116,7 +116,13 @@ describe 'Test de transformaciones "integradoras"' do
 
    expect(a.map {|m| m.name}).to contain_exactly(:saludar)
   end
+  it 'Asepect.on sin transform devuelve el metodo ' do
+    a=Aspect.on A do
+      where name(/saludar/)
+    end
 
+    expect(a.map {|m| m.name}).to contain_exactly(:saludar)
+  end
 
 
   it 'instead of' do
