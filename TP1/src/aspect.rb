@@ -3,7 +3,8 @@ class Aspect
 
   def self.on (*parametros,&bloquesin)
     fuentes = select_origins(*parametros)
-    fuentes.each {|fuente| Origen.new(fuente).instance_eval &bloquesin}
+    fuentes.flat_map {|fuente| Origen.new(fuente).instance_eval &bloquesin}
+
   end
 
   def self.regexp_to_origins(regexp)

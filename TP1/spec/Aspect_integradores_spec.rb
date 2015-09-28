@@ -107,6 +107,15 @@ describe 'Test de transformaciones "integradoras"' do
 
     expect(A.new.saludar("Mundo")).to eq("Adiosin, Mundo")
   end
+  it 'Asepect.on redireccionar saludo devuelve saludar ' do
+   a=Aspect.on A do
+      transform(where name(/saludar/)) do
+        redirect_to(B.new)
+      end
+    end
+
+   expect(a.map {|m| m.name}).to contain_exactly(:saludar)
+  end
 
 
 
