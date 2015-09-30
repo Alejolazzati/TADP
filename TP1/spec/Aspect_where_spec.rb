@@ -18,12 +18,26 @@ describe 'Test de condiciones concretas' do
     Origen.new(MiClase)
   }
 
-  it 'name con (/fo{2}/) ' do
-    selector = origen.instance_eval { where name(/fo{2}/) }
-    expect(selector).to contain_exactly(:foo)
+  let(:aspect) do
+    proc do
+    |&b|
+      Aspect.on MiClase do
+        where (instance_eval &b)
+      end
+    end
   end
 
   it 'name con (/fo{2}/) ' do
+    expect(aspect.call { name(/fo{2}/) }).to contain_exactly(:foo)
+  end
+
+  it 'name con (/fo{2}/) y name(/foo/)' do
+    expect(aspect.call { name(/fo{2}/); name(/foo/) }).to contain_exactly(:foo)
+  end
+
+
+
+  it 'name con (/fo{2}/) y name(/foo/) ' do
     selector = origen.instance_eval { where name(/fo{2}/), name(/foo/) }
     expect(selector).to contain_exactly(:foo)
   end
@@ -55,34 +69,33 @@ describe 'Test de condiciones concretas' do
   end
 
 
-
-   it 'foo tiene 3 parametros mandatory' do
-    sarlompa = origen.instance_eval {where has_parameters(3, mandatory)}
+  it 'foo tiene 3 parametros mandatory' do
+    sarlompa = origen.instance_eval { where has_parameters(3, mandatory) }
     expect(sarlompa).to contain_exactly(:foo)
   end
 
   it 'foo es el unico con 6 parametros mandatory' do
-    sarlompa =origen.instance_eval {where has_parameters(6)}
+    sarlompa =origen.instance_eval { where has_parameters(6) }
     expect(sarlompa).to contain_exactly(:foo)
   end
 
   it 'foo y bar tienen 3 parametros optional' do
-    sarlompa =origen.instance_eval {where has_parameters(6)}
+    sarlompa =origen.instance_eval { where has_parameters(6) }
     expect(sarlompa).to contain_exactly(:foo)
   end
 
   it 'foo y bar tienen 4 parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval {where has_parameters(4, /p*/)}
+    sarlompa =origen.instance_eval { where has_parameters(4, /p*/) }
     expect(sarlompa).to contain_exactly(:bar)
   end
 
- it 'solo foo tienen 5 al menos parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval {where has_parameters(6, /p*/)}
+  it 'solo foo tienen 5 al menos parametros que matchean con la regex' do
+    sarlompa =origen.instance_eval { where has_parameters(6, /p*/) }
     expect(sarlompa).to contain_exactly(:foo)
   end
 
   it 'nadie 7 al menos parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval {where has_parameters(7, /p*/)}
+    sarlompa =origen.instance_eval { where has_parameters(7, /p*/) }
     expect(sarlompa).to contain_exactly()
   end
 
