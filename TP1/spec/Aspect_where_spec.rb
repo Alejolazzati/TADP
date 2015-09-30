@@ -22,81 +22,59 @@ describe 'Test de condiciones concretas' do
     proc do
     |&b|
       Aspect.on MiClase do
-        where (instance_eval &b)
+        instance_eval &b
       end
     end
   end
 
   it 'name con (/fo{2}/) ' do
-    expect(aspect.call { name(/fo{2}/) }).to contain_exactly(:foo)
+    expect(aspect.call {where name(/fo{2}/) }).to contain_exactly(:foo)
   end
 
-  it 'name con (/fo{2}/) y name(/foo/)' do
-    expect(aspect.call { name(/fo{2}/); name(/foo/) }).to contain_exactly(:foo)
-  end
-
-
-
-  it 'name con (/fo{2}/) y name(/foo/) ' do
-    selector = origen.instance_eval { where name(/fo{2}/), name(/foo/) }
-    expect(selector).to contain_exactly(:foo)
-  end
-
-  it ' metodo foo (foo matchea ambas regex)' do
-    selector = origen.instance_eval { where name(/fo{2}/), name(/foo/) }
-    expect(selector).to contain_exactly(:foo)
+  it 'name con (foo matchea ambas regex)' do
+    expect(aspect.call {where name(/fo{2}/), name(/foo/) }).to contain_exactly(:foo)
   end
 
   it 'ni bar ni foo matchean' do
-    selector = origen.instance_eval { where name(/^fi+/) }
-    expect(selector).to contain_exactly()
+    expect(aspect.call {where name(/^fi+/)}).to contain_exactly()
   end
 
 
   it 'ni foo ni bar matchean ambas regex' do
-    selector = origen.instance_eval { where name(/foo/), name(/bar/) }
-    expect(selector).to contain_exactly()
+    expect(aspect.call {where name(/foo/), name(/bar/)}).to contain_exactly()
   end
 
   it 'metodo privado y regex bar' do
-    visibility =origen.instance_eval { where name(/bar/), is_private }
-    expect(visibility).to contain_exactly(:bar)
+    expect(aspect.call {where name(/bar/), is_private }).to contain_exactly(:bar)
   end
 
   it 'bar no es publico' do
-    visibility =origen.instance_eval { where name(/bar/), is_public }
-    expect(visibility).to contain_exactly()
+    expect(aspect.call { where name(/bar/), is_public }).to contain_exactly()
   end
 
 
   it 'foo tiene 3 parametros mandatory' do
-    sarlompa = origen.instance_eval { where has_parameters(3, mandatory) }
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(aspect.call { where has_parameters(3, mandatory) }).to contain_exactly(:foo)
   end
 
   it 'foo es el unico con 6 parametros mandatory' do
-    sarlompa =origen.instance_eval { where has_parameters(6) }
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(aspect.call { where has_parameters(6) }).to contain_exactly(:foo)
   end
 
   it 'foo y bar tienen 3 parametros optional' do
-    sarlompa =origen.instance_eval { where has_parameters(6) }
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(aspect.call { where has_parameters(3,optional) }).to contain_exactly(:foo, :bar)
   end
 
   it 'foo y bar tienen 4 parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval { where has_parameters(4, /p*/) }
-    expect(sarlompa).to contain_exactly(:bar)
+    expect(aspect.call { where has_parameters(4, /p*/) }).to contain_exactly(:bar)
   end
 
   it 'solo foo tienen 5 al menos parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval { where has_parameters(6, /p*/) }
-    expect(sarlompa).to contain_exactly(:foo)
+    expect(aspect.call { where has_parameters(6, /p*/) }).to contain_exactly(:foo)
   end
 
   it 'nadie 7 al menos parametros que matchean con la regex' do
-    sarlompa =origen.instance_eval { where has_parameters(7, /p*/) }
-    expect(sarlompa).to contain_exactly()
+    expect(aspect.call {where has_parameters(7, /p*/) }).to contain_exactly()
   end
 
 
