@@ -3,7 +3,6 @@ class Transformacion
   def initialize(fuente, metodo_inicial)
     @real_method = @metodo = fuente.instance_method(metodo_inicial)
     @target = fuente
-    @inject = {}
   end
 
   def transformate(&bloquesin)
