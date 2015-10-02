@@ -18,7 +18,6 @@ class Aspect
     posible_origen.is_a?(Regexp) ? (self.regexp_to_origins posible_origen) : [posible_origen]
   end
 
-
   def self.regexp_to_origins(regexp)
     Object.constants.grep(regexp) {|s|Object.const_get s}
   end

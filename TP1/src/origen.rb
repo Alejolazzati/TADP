@@ -17,6 +17,7 @@ class Origen
       condiciones.all? { |condicion| condicion.call(method) }
    end
   end
+
   def transform(metodos_filtrados, &bloque)
     metodos_filtrados.each do
       |metodo|

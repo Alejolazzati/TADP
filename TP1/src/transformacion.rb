@@ -62,10 +62,6 @@ class Transformacion
     index.nil? ? (raise ArgumentError.new 'Ese parametro no existe PAPA!') : index
   end
 
-  def get_value(value, original_parameter, method_name)
-    value.is_a?(Proc) ? value.call(self, method_name, original_parameter) : value
-  end
-
   def bindear(fuente,method)
     method.is_a?(UnboundMethod) ? method.bind(fuente) : method
   end
