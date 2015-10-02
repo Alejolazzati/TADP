@@ -21,7 +21,7 @@ class Origen
     metodos_filtrados.each do
       |metodo|
       metodo
-      Transformacion.new(target, metodo).transformate &bloque#haciendo esto para una misma transformacion estoy haciendo el mismo build una y otra vez
+      Transformacion.new(target, metodo).transformate &bloque
 
     end
   end

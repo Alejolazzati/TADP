@@ -22,7 +22,7 @@ module Condicion
   end
 
   def type_regex(regex)
-    proc{|_,nom|  nom.to_s =~ regex }
+    proc{|_,nom|  regex.match(nom) }
   end
   def mandatory
     proc {|mode,_| mode == :req }
